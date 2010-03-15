@@ -1,0 +1,66 @@
+#!/bin/bash
+
+_check_conf_files="${_cur_repo}-${_arch}_cfg.conf ${_cur_repo}-${_arch}_makepkg.conf user.conf"
+_load_conf_files="${_cur_repo}-${_arch}_cfg.conf ${_cur_repo}-${_arch}_makepkg.conf user.conf"
+
+check_configs() {
+            title2 "Checking configs"
+
+            for conffile in ${_check_conf_files}
+            do
+                status_start "${conffile}"
+
+                if [ -e "_buildsystem/${conffile}" ] ; then
+                    status_ok 
+                else
+                    status_fail
+                    error "${conffile} not available. Exiting..."
+                    newline
+                    exit 1
+                fi
+            done
+}
+
+load_configs() {
+            title2 "Loading configs"
+
+            local ret=0
+
+            for conffile in ${_load_conf_files}
+            do
+                source _buildsystem/${conffile} 2>&1 || ret=$?
+
+                if [ ${ret} -gt 0 ]; then
+                    status_fail
+                    error "Sourcing ${conffile} failed. Exiting..."
+                    newline
+                    exit 1
+                fi
+            done
+
+                if [ "$_cur_repo" = "core" ] ; then
+                        source _buildsystem/core-${_arch}_pkgs.conf
+                        
+                elif [ "$_cur_repo" = "testing" ] ; then
+                        source _buildsystem/testing-${_arch}_pkgs.conf
+
+                elif [ "$_cur_repo" = "unstable" ] ; then
+                        source _buildsystem/unstable-${_arch}_pkgs.conf
+                
+                elif [ "$_cur_repo" = "extragear" ] ; then
+                        source _buildsystem/extragear-${_arch}_pkgs.conf
+
+                elif [ "$_cur_repo" = "playground" ] ; then
+                        source _buildsystem/playground-${_arch}_pkgs.conf
+                        
+                elif [ "$_cur_repo" = "tools" ] ; then
+                        source _buildsystem/tools-${_arch}_pkgs.conf
+
+                elif [ "$_cur_repo" = "chakra" ] ; then
+                        source _buildsystem/chakra-${_arch}_pkgs.conf
+                        
+                else
+                        echo "ERROR: no repo specified!!!"
+                        exit 1
+                fi
+}

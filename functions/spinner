@@ -1,0 +1,11 @@
+spinner(){
+	PROC=$1
+	while [ -d /proc/$PROC ];do
+		echo -n '/' ; sleep 0.1
+		echo -n '-' ; sleep 0.1
+		echo -n '\' ; sleep 0.1
+		echo -n '|' ; sleep 0.1
+	done
+	return 0
+}
+

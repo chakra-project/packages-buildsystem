@@ -1,0 +1,28 @@
+ 
+PROGRESSBAR="/tmp/chakra-buildsystem.progress"
+
+progress(){
+	local green="\033[42;32m \033[0m"
+	local p
+	local count=0
+	type usleep >/dev/null 2>&1 && sleep="usleep 500000" || sleep="sleep 2"
+	
+	[ -r "$PROGRESSBAR" ] && rm -f "$PROGRESSBAR"
+		touch "$PROGRESSBAR"
+		
+	while [ -r "$PROGRESSBAR" ]; do
+		if [ "$count" -ge 55 ]; then
+			for p in "/" "-" "\\" "|"; do
+				echo -n -e "\b${p}"
+				$sleep
+				[ -r "$PROGRESSBAR" ] || break
+			done
+		else
+			echo -n -e "\b$green$green"
+			$sleep
+		fi
+		
+	let count++
+	done
+}
+

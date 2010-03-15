@@ -1,0 +1,75 @@
+if [ -f /etc/profile ]; then
+	    . /etc/profile
+fi
+
+# enable bash completion in interactive shells
+if [ -f /etc/bash_completion ]; then
+	    . /etc/bash_completion
+fi
+
+# Check for an interactive session
+[ -z "$PS1" ] && return
+
+# add autocompletion for sudo
+complete -cf sudo
+
+shopt -s cdspell          	# autocorrects cd misspellings
+shopt -s checkwinsize     	# update the value of LINES and COLUMNS after each command if altered
+shopt -s cmdhist          	# save multi-line commands in history as single line
+shopt -s dotglob          	# include dotfiles in pathname expansion
+shopt -s expand_aliases   	# expand aliases
+shopt -s extglob          	# enable extended pattern-matching features
+shopt -s histappend       	# append to (not overwrite) the history file
+shopt -s hostcomplete     	# attempt hostname expansion when @ is at the beginning of a word
+shopt -s nocaseglob       	# pathname expansion will be treated as case-insensitive
+
+# exports
+export HISTSIZE=10000           # bash history will save N commands
+export HISTFILESIZE=${HISTSIZE} # bash will remember N commands
+export HISTCONTROL=ignoreboth   # ingore duplicates and spaces (ignoreboth, ignoredups, ignorespace)
+
+# aliases
+alias ls='ls --group-directories-first --time-style=+"%d.%m.%Y %H:%M" --color=auto -F'
+alias ll='ls -l --group-directories-first --time-style=+"%d.%m.%Y %H:%M" --color=auto -F'
+alias la='ls -la --group-directories-first --time-style=+"%d.%m.%Y %H:%M" --color=auto -F'
+alias l1='ls -1 --group-directories-first --color=auto -F'
+alias pacman='sudo pacman'
+alias grep='grep --color=tty -d skip'
+alias cp="cp -i"                          # confirm before overwriting something
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+alias vp='vim PKGBUILD'
+alias vs='vim SPLITBUILD'
+alias checkip='wget http://checkip.dyndns.org/ -O - -o /dev/null | cut -d: -f 2 | cut -d\< -f 1'
+
+# ex - archive extractor
+# usage: ex <file>
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1     ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# vim stuff
+export EDITOR=vim
+export VISUAL=vim
+alias vi=vim
+
+alias ls='ls --color=auto'
+PS1="\[\e[31;1m\]\u@[chroot]:\w$ \[\e[0m\]"

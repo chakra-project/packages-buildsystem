@@ -1,0 +1,58 @@
+#!/bin/bash
+
+check_accounts() { 
+        title2 "Checking account settings"
+        status_start "server"
+        if [ -z "$_rsync_server" ]; then
+            status_fail
+            error "You need to configure the RSYNC_SERVER setting in buildsystem.conf ... "
+            newline
+            exit 1
+        else
+            status_ok
+        fi
+
+        status_start "directory"
+        if [ -z "$_rsync_dir" ]; then
+            status_fail
+            error "You need to configure the RSYNC_DIR setting in buildsystem.conf ... "
+            newline
+            exit 1
+        else
+            status_ok
+        fi
+
+        status_start "user"
+        if [ -z "$_rsync_user" ]; then
+            status_fail
+            error "You need to configure the RSYNC_USER setting in buildsystem.conf ... "
+            newline
+            exit 1
+        else
+            status_ok
+        fi
+
+        status_start "password"
+        if [ -z "$_rsync_pass" ]; then
+            status_fail
+            error "You need to configure the RSYNC_PASS setting in buildsystem.conf ... "
+            newline
+            exit 1
+        else
+            status_ok
+        fi
+} 
+
+check_rsync() { 
+        FIND_RSYNC=`whereis rsync | cut -d " " -f 2`
+        title2 "Checking for rsync"
+        status_start "rsync"
+        if [ -z "$FIND_RSYNC" ]; then
+            status_fail
+            error "You need to have rsync installed. Exiting ... "
+            newline
+            exit 1
+        else
+            status_ok
+        fi
+}

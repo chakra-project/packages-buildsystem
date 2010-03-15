@@ -1,0 +1,45 @@
+#!/bin/bash
+
+get_target_package_list() {
+	_available_pkglists=`cat _buildsystem/${_cur_repo}_pkgs.conf | grep "_" | cut -d "=" -f 1 | cut -d "_" -f 4 | sed '/^$/d'`
+	if [[ $# == 0 || $1 == "" ]] ; then
+		error "You need to specify package directories ('/' will be ignored) or package lists "
+		error "as defined in the file _buildsystem/${_cur_repo}_pkgs.conf. Available lists:"
+		for i in ${_available_pkglists} ; do
+			echo -n  " $i"
+		done
+		echo ""
+		return 1
+	fi
+	_args=$@
+	_target_package_list=""
+	
+	for i in $_args ; do
+		evaluate_target_argument "$i"
+	done
+	if [ ${#_target_package_list} == 0 ] ; then
+		error "No package in target list, aborting"
+		return 1
+	fi
+}
+
+evaluate_target_argument() {
+	_mod="$1"
+	_mod2=`echo $_mod | sed 's|/||'`	 
+	if [ -d ${_build_work}/${_mod} ] ; then
+		_target_package_list="$_target_package_list $_mod2"
+		return
+	fi
+	_mod3=`echo $_mod | sed s/-/_/`	 
+	whattodo=($(eval echo "\${_build_${_cur_repo}_${_mod3}[@]}"))
+
+	if [ ${#whattodo} == 0 ] ; then
+		warning "$_mod is neither a package dir or a list, it will be ignored"
+		return
+	fi
+
+	for j in ${whattodo[*]} ; do
+		_target_package_list="$_target_package_list $j"
+	done
+}
+	
