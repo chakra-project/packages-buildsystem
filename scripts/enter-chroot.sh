@@ -47,7 +47,7 @@ fi
 	sudo cp -vf /etc/mtab $CURDIR/$REPO/chroot/etc/mtab &>/dev/null
 	sudo cp -vf /etc/resolv.conf $CURDIR/$REPO/chroot/etc/resolv.conf &>/dev/null
 
-	sudo chroot $CURDIR/$REPO su - $USER
+	sudo chroot $CURDIR/$REPO/chroot su - $USER
 
 	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
