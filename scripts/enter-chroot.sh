@@ -41,7 +41,7 @@ fi
 	sudo mount -v /dev/ $CURDIR/$REPO/chroot/dev/ --bind &>/dev/null
 	sudo mount -v /sys/ $CURDIR/$REPO/chroot/sys/ --bind &>/dev/null
 	sudo mount -v /proc/ $CURDIR/$REPO/chroot/proc/ --bind &>/dev/null
-	sudo mount -v $CURDIR/_buildsystem/ $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildsystem --bind &>/dev/null
+	sudo mount -v $CURDIR/_buildscripts/ $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts --bind &>/dev/null
 	sudo mount -v $CURDIR/_sources/ $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources --bind &>/dev/null
 	sudo mount -v /var/cache/pacman/pkg $CURDIR/$REPO/chroot/var/cache/pacman/pkg --bind &>/dev/null
 	sudo cp -vf /etc/mtab $CURDIR/$REPO/chroot/etc/mtab &>/dev/null
@@ -52,20 +52,20 @@ fi
 	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildsystem &>/dev/null
+	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
 	
 	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildsystem &>/dev/null
+	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
 	
 	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildsystem &>/dev/null
+	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null

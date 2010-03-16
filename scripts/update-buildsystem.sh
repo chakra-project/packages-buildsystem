@@ -32,13 +32,13 @@ status_done() {
 	echo -e "\033[1;32m DONE \033[1;0m"
 }
 
-msg "updating _buildsystem"
-	pushd $CURDIR/_buildsystem &>/dev/null
+msg "updating _buildscripts"
+	pushd $CURDIR/_buildscripts &>/dev/null
 	svn up
 	popd &>/dev/null
 	
 	rm -rf $CURDIR/*.sh
-	cp $CURDIR/_buildsystem/scripts/*.sh $CURDIR/
+	cp $CURDIR/_buildscripts/scripts/*.sh $CURDIR/
 	rm -rf $CURDIR/create-builden*.sh
 	rm -rf $CURDIR/setu*.sh
 	chmod +x *.sh
@@ -46,7 +46,7 @@ msg "updating _buildsystem"
 msg "updating makepkg"
 	for repo in $REPOS
 	do
-		cp -f $CURDIR/_buildsystem/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/$repo
+		cp -f $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/$repo
 	done
 
 msg "all done"
