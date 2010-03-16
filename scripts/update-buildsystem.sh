@@ -7,7 +7,7 @@ CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 BASENAME="Chakra"
 BASEPATH=`echo $CURDIR`
-REPOS=`ls -1 $BASEPATH | grep -v -e sh -e _ -e pkgbuild -e packages | sed 's/\///g'`
+REPOS=`ls -1 $BASEPATH | grep -e sh -e _ -e pkgbuild -e packages  -v | sed 's/\///g'`
 
 newline() {
 	echo " "
@@ -39,13 +39,14 @@ msg "updating _buildsystem"
 	
 	rm -rf $CURDIR/*.sh
 	cp $CURDIR/_buildsystem/scripts/*.sh $CURDIR/
-	rm -rf $CURDIR/create-buildenv.sh
+	rm -rf $CURDIR/create-builden*.sh
+	rm -rf $CURDIR/setu*.sh
 	chmod +x *.sh
 	
 msg "updating makepkg"
 	for repo in $REPOS
 	do
-		cp -f $CURDIR/_buildsystem/makepkg $CURDIR/$repo/home/$USER/buildroot/$repo
+		cp -f $CURDIR/_buildsystem/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/$repo
 	done
 
 msg "all done"

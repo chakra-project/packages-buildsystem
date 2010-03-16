@@ -31,7 +31,7 @@ for repo in $REPOS
 	do
 	msg "updating chroot: $repo"
 	newline
-		sudo pacman -r $CURDIR/$repo -Suy --noconfirm
+		sudo pacman -r $CURDIR/$repo/chroot --cachedir $CURDIR/_cache -Suy --noconfirm
 	done
 	
 	newline
