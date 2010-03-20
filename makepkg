@@ -38,7 +38,7 @@ export TEXTDOMAINDIR='/usr/share/locale'
 export COMMAND_MODE='legacy'
 
 myver='3.3-kdemod'
-confdir='../_buildsystem'
+confdir='../_buildscripts'
 BUILDSCRIPT='PKGBUILD'
 startdir="$PWD"
 ARCH="$_arch"
