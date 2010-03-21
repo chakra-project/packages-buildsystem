@@ -39,28 +39,28 @@ load_configs() {
             done
 
                 if [ "$_cur_repo" = "core" ] ; then
-                        . _buildscripts/core-${_arch}-pkgs.conf
+                        . "_buildscripts/core-${_arch}-pkgs.conf"
                         
                 elif [ "$_cur_repo" = "core-testing" ] ; then
-                        . _buildscripts/core-testing-${_arch}-pkgs.conf
+                        . "_buildscripts/core-testing-${_arch}-pkgs.conf"
 
                 elif [ "$_cur_repo" = "platform" ] ; then
-                        . _buildscripts/platform-${_arch}-pkgs.conf
+                        . "_buildscripts/platform-${_arch}-pkgs.conf"
                 
                 elif [ "$_cur_repo" = "platform-testing" ] ; then
-                        . _buildscripts/platform-testing-${_arch}-pkgs.conf
+                        . "_buildscripts/platform-testing-${_arch}-pkgs.conf"
 
                 elif [ "$_cur_repo" = "desktop" ] ; then
-                        . _buildscripts/desktop-${_arch}-pkgs.conf
+                        . "_buildscripts/desktop-${_arch}-pkgs.conf"
                         
                 elif [ "$_cur_repo" = "desktop-testing" ] ; then
-                        . _buildscripts/desktop-testing-${_arch}-pkgs.conf
+                        . "_buildscripts/desktop-testing-${_arch}-pkgs.conf"
 
                 elif [ "$_cur_repo" = "apps" ] ; then
-                        . _buildscripts/apps-${_arch}-pkgs.conf
+                        . "_buildscripts/apps-${_arch}-pkgs.conf"
 
                 elif [ "$_cur_repo" = "apps-testing" ] ; then
-                        . _buildscripts/apps-testing-${_arch}-pkgs.conf
+                        . "_buildscripts/apps-testing-${_arch}-pkgs.conf"
 
                 else
                         echo "ERROR: no repo specified!!!"
