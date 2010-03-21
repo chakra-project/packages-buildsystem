@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #
-#   makepkg - make packages compatable for use with pacman
-#   @configure_input@
+#   makepkg - make packages compatible for use with pacman
+#   Generated from makepkg.in; do not edit by hand.
 #
 #   Copyright (c) 2006-2009 Pacman Development Team <pacman-dev@archlinux.org>
 #   Copyright (c) 2002-2006 by Judd Vinet <jvinet@zeroflux.org>
@@ -37,7 +37,7 @@ export TEXTDOMAINDIR='/usr/share/locale'
 # file -i does not work on Mac OSX unless legacy mode is set
 export COMMAND_MODE='legacy'
 
-myver='3.3-kdemod'
+myver='3.3.3'
 confdir='../_buildscripts'
 BUILDSCRIPT='PKGBUILD'
 startdir="$PWD"
@@ -45,10 +45,8 @@ ARCH="$_arch"
 current_repo=`pushd $startdir &>/dev/null; pushd .. &>/dev/null; pwd | awk -F '/' '{print $NF}'; popd &>/dev/null; popd &>/dev/null`
 srcdir="$startdir/src"
 pkgdir="$startdir/pkg"
-dbgdir="$startdir/dbg"
-hdrdir="$startdir/hdr"
 
-packaging_options=('strip' 'splitdbg' 'splithdr' 'docs' 'libtool' 'emptydirs' 'zipman' 'purge')
+packaging_options=('strip' 'docs' 'libtool' 'emptydirs' 'zipman' 'purge')
 other_options=('ccache' 'distcc' 'makeflags' 'force')
 splitpkg_overrides=('pkgdesc' 'license' 'groups' 'depends' 'optdepends' 'provides' \
                     'conflicts' 'replaces' 'backup' 'options' 'install')
@@ -62,6 +60,7 @@ DEP_BIN=0
 FORCE=0
 INFAKEROOT=0
 GENINTEG=0
+SKIPINTEG=0
 INSTALL=0
 NOBUILD=0
 NODEPS=0
@@ -181,7 +180,7 @@ clean_up() {
 trap 'clean_up' 0
 trap 'trap_exit "$(gettext "TERM signal caught. Exiting...")"' TERM HUP QUIT
 trap 'trap_exit "$(gettext "Aborted by user! Exiting...")"' INT
-trap 'trap_exit "$(gettext "An unknown error has occured. Exiting...")"' ERR
+trap 'trap_exit "$(gettext "An unknown error has occurred. Exiting...")"' ERR
 
 # a source entry can have two forms :
 # 1) "filename::http://path/to/file"
@@ -191,11 +190,11 @@ trap 'trap_exit "$(gettext "An unknown error has occured. Exiting...")"' ERR
 get_filename() {
 	# if a filename is specified, use it
 	local filename=$(echo $1 | sed 's|::.*||')
-	# if it is just an url, we only keep the last component
+	# if it is just an URL, we only keep the last component
 	echo "$filename" | sed 's|^.*://.*/||g'
 }
 
-# extract the url from a source entry
+# extract the URL from a source entry
 get_url() {
 	# strip an eventual filename
 	echo $1 | sed 's|.*::||'
@@ -282,7 +281,7 @@ in_array() {
 }
 
 get_downloadclient() {
-	# $1 = url with valid protocol prefix
+	# $1 = URL with valid protocol prefix
 	local url=$1
 	local proto=$(echo "$url" | sed 's|://.*||')
 
@@ -318,11 +317,11 @@ get_downloadclient() {
 download_file() {
 	# download command
 	local dlcmd=$1
-	# url of the file
+	# URL of the file
 	local url=$2
 	# destination file
 	local file=$3
-	# temporary download file, default to last component of the url
+	# temporary download file, default to last component of the URL
 	local dlfile=$(echo "$url" | sed 's|^.*://.*/||g')
 
 	# replace %o by the temporary dlfile if it exists
@@ -330,7 +329,7 @@ download_file() {
 		dlcmd=${dlcmd//\%o/\"$file.part\"}
 		dlfile="$file.part"
 	fi
-	# add the url, either in place of %u or at the end
+	# add the URL, either in place of %u or at the end
 	if echo "$dlcmd" | grep -q "%u" ; then
 		dlcmd=${dlcmd//\%u/\"$url\"}
 	else
@@ -616,11 +615,14 @@ check_checksums() {
 		fi
 	done
 
-# not so strict, mate
-#	if [ $correlation -eq 0 ]; then
-#		error "$(gettext "Integrity checks are missing.")"
-#		exit 1 # TODO: error code
-#	fi
+	if [ $correlation -eq 0 ]; then
+		if [ $SKIPINTEG -eq 1 ]; then
+			warning "$(gettext "Integrity checks are missing.")"
+		else
+			error "$(gettext "Integrity checks are missing.")"
+			exit 1 # TODO: error code
+		fi
+	fi
 }
 
 extract_sources() {
@@ -646,16 +648,26 @@ extract_sources() {
 
 		# fix flyspray #6246
 		local file_type=$(file -bizL "$file")
+		local ext=${file##*.}
 		local cmd=''
 		case "$file_type" in
 			*application/x-tar*|*application/zip*|*application/x-zip*|*application/x-cpio*)
-				cmd="bsdtar -x -f" ;;
+				cmd="bsdtar" ;;
 			*application/x-gzip*)
-				cmd="gunzip -d -f" ;;
+				case "$ext" in
+					gz|z|Z) cmd="gzip" ;;
+					*) continue;;
+				esac ;;
 			*application/x-bzip*)
-				cmd="bunzip2 -f" ;;
+				case "$ext" in
+					bz2|bz) cmd="bzip2" ;;
+					*) continue;;
+				esac ;;
 			*application/x-xz*)
-				cmd="xz -d -f" ;;
+				case "$ext" in
+					xz) cmd="xz" ;;
+					*) continue;;
+				esac ;;
 			*)
 				# Don't know what to use to extract this file,
 				# skip to the next file
@@ -663,8 +675,13 @@ extract_sources() {
 		esac
 
 		local ret=0
-		msg2 '%s' "$cmd \"$file\""
-		$cmd "$file" || ret=$?
+		msg2 "$(gettext "Extracting %s with %s")" "$file" "$cmd"
+		if [ "$cmd" = "bsdtar" ]; then
+			$cmd -xf "$file" || ret=?
+		else
+			rm -f "${file%.*}"
+			$cmd -dcf "$file" > "${file%.*}" || ret=?
+		fi
 		if [ $ret -ne 0 ]; then
 			error "$(gettext "Failed to extract %s")" "$file"
 			plain "$(gettext "Aborting...")"
@@ -771,7 +788,7 @@ run_package() {
 			mv "$BUILDLOG" "$BUILDLOG.$i"
 		fi
 
-		# ensure overridden package variables suvrive tee with split packages
+		# ensure overridden package variables survive tee with split packages
 		logpipe=$(mktemp -u "$startdir/logpipe.XXXXXXXX")
 		mknod "$logpipe" p
 		exec 3>&1
@@ -849,65 +866,12 @@ tidy_install() {
 		done
 	fi
 
-	if [ "$(check_option splitdbg)" = "y" ] || [ "$SPLIT_DBG" = "1" ]; then
-		msg2 "$(gettext "Moving debugging symbols from binaries and libraries into separate files...")"
-		local binary
-		if [ -z "${STRIP_DIRS[*]}" ]; then
-			# fall back to default value
-			STRIP_DIRS=(bin lib sbin usr/{bin,lib,sbin,local/{bin,lib,sbin}}
-			opt/*/{bin,lib,sbin})
-		fi
-		find ${STRIP_DIRS[@]} -type f 2>/dev/null | while read binary ; do
-			case "$(file -biz "$binary")" in
-				*application/x-sharedlib*)  # Libraries (.so)
-					/usr/bin/objcopy --only-keep-debug "$binary" "$binary.debug"
-					/usr/bin/strip --strip-debug --strip-unneeded "$binary"
-					debug_basebinary=`echo "$binary" | awk -F '/' '{print $NF}'`
-					debug_symbolfile=`echo "$binary.debug" | awk -F '/' '{print $NF}'`
-					debug_basedir=`dirname "$binary.debug"`
-					pushd $debug_basedir &>/dev/null
-						/usr/bin/objcopy --add-gnu-debuglink="$debug_symbolfile" "$debug_basebinary" 
-					popd &>/dev/null
-					if [ ! -d "${dbgdir}/usr/lib/debug/${debug_basedir}" ]; then
-						mkdir -p "${dbgdir}/usr/lib/debug/${debug_basedir}"
-					fi
-					mv "$binary.debug" "${dbgdir}/usr/lib/debug/${debug_basedir}/$debug_symbolfile";;
-				*application/x-archive*)  # Libraries (.a)
-					/usr/bin/objcopy --only-keep-debug "$binary" "$binary.debug"
-					/usr/bin/strip --strip-debug --strip-unneeded "$binary"
-					debug_basebinary=`echo "$binary" | awk -F '/' '{print $NF}'`
-					debug_symbolfile=`echo "$binary.debug" | awk -F '/' '{print $NF}'`
-					debug_basedir=`dirname "$binary.debug"`
-					pushd $debug_basedir &>/dev/null
-						/usr/bin/objcopy --add-gnu-debuglink="$debug_symbolfile" "$debug_basebinary" 
-					popd &>/dev/null
-					if [ ! -d "${dbgdir}/usr/lib/debug/${debug_basedir}" ]; then
-						mkdir -p "${dbgdir}/usr/lib/debug/${debug_basedir}"
-					fi
-					mv "$binary.debug" "${dbgdir}/usr/lib/debug/${debug_basedir}/$debug_symbolfile";;
-				*application/x-executable*) # Binaries
-					/usr/bin/objcopy --only-keep-debug "$binary" "$binary.debug"
-					/usr/bin/strip --strip-debug --strip-unneeded "$binary"
-					debug_basebinary=`echo "$binary" | awk -F '/' '{print $NF}'`
-					debug_symbolfile=`echo "$binary.debug" | awk -F '/' '{print $NF}'`
-					debug_basedir=`dirname "$binary.debug"`
-					pushd $debug_basedir &>/dev/null
-						/usr/bin/objcopy --add-gnu-debuglink="$debug_symbolfile" "$debug_basebinary" 
-					popd &>/dev/null
-					if [ ! -d "${dbgdir}/usr/lib/debug/${debug_basedir}" ]; then
-						mkdir -p "${dbgdir}/usr/lib/debug/${debug_basedir}"
-					fi
-					mv "$binary.debug" "${dbgdir}/usr/lib/debug/${debug_basedir}/$debug_symbolfile";;
-			esac
-		done
-	fi
-
 	if [ "$(check_option strip)" = "y" -a -n "${STRIP_DIRS[*]}" ]; then
 		msg2 "$(gettext "Stripping debugging symbols from binaries and libraries...")"
 		local binary
 		find ${STRIP_DIRS[@]} -type f 2>/dev/null | while read binary ; do
 			case "$(file -biz "$binary")" in
-				*compressed-encoding*)      # Skip compressed binarys
+				*compressed-encoding*)      # Skip compressed binaries
 					;;
 				*application/x-sharedlib*)  # Libraries (.so)
 					/usr/bin/strip -S "$binary";;
@@ -917,27 +881,6 @@ tidy_install() {
 					/usr/bin/strip "$binary";;
 			esac
 		done
-	fi
-
-	if [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_HDR" = "1" ]; then
-		msg2 "$(gettext "Moving header files into separate package...")"
-		
-		# this is very hardcoded stuff
-		if [ -d "${pkgdir}/usr/include" ]; then
-			msg "DEBUG: moving headers..."
-			ls -la ${pkgdir}/usr/include
-			# move headers into new package
-			mkdir -p ${hdrdir}/usr
-			mv -v ${pkgdir}/usr/include ${hdrdir}/usr
-		fi
-		
-		if [ -d "${pkgdir}/usr/share/apps/cmake" ]; then
-			msg "DEBUG: moving .cmake files..."
-			ls -la ${pkgdir}/usr/share/apps/cmake
-			# also move .cmake files into the new package
-			mkdir -p ${hdrdir}/usr/share/apps
-			mv -v ${pkgdir}/usr/share/apps/cmake ${hdrdir}/usr/share/apps
-		fi
 	fi
 
 	if [ "$(check_option libtool)" = "n" ]; then
@@ -1025,116 +968,6 @@ write_pkginfo() {
 	fi
 }
 
-write_debug_pkginfo() {
-	local builddate=$(date -u "+%s")
-	if [ -n "$PACKAGER" ]; then
-		local packager="$PACKAGER"
-	else
-		local packager="Unknown Packager"
-	fi
-	local size=$(du -sk | awk '{print $1 * 1024}')
-
-	msg2 "$(gettext "Generating .PKGINFO file...")"
-	echo "# Generated by makepkg $myver" >.PKGINFO
-	if [ "$INFAKEROOT" -eq 1 ]; then
-		echo "# using $(fakeroot -v)" >>.PKGINFO
-	fi
-	echo "# $(LC_ALL=C date -u)" >>.PKGINFO
-	echo "pkgname = $1-debug" >>.PKGINFO
-	[ "$SPLITPKG" -eq 1 ] && echo "pkgbase = $pkgbase" >>.PKGINFO
-	echo "pkgver = $pkgver-$pkgrel" >>.PKGINFO
-	echo "pkgdesc = $pkgdesc (Debugging Symbols)" >>.PKGINFO
-	echo "url = $url" >>.PKGINFO
-	echo "builddate = $builddate" >>.PKGINFO
-	echo "packager = $packager" >>.PKGINFO
-	echo "size = $size" >>.PKGINFO
-	if [ -n "$CARCH" ]; then
-		echo "arch = $CARCH" >>.PKGINFO
-	fi
-
-	echo "group = kdemod-debug" >>.PKGINFO
-	[ "$SPLITPKG" -eq 1 ] && echo "group = $pkgbase-debug" >>.PKGINFO
-	echo "group = kdemod-uninstall" >>.PKGINFO
-
-	local it
-	for it in "${packaging_options[@]}"; do
-		local ret="$(check_option $it)"
-		if [ "$ret" != "?" ]; then
-			if [ "$ret" = "y" ]; then
-				echo "makepkgopt = $it" >>.PKGINFO
-			else
-				echo "makepkgopt = !$it" >>.PKGINFO
-			fi
-		fi
-	done
-
-	# TODO maybe remove this at some point
-	# warn if license array is not present or empty
-	if [ -z "$license" ]; then
-		warning "$(gettext "Please add a license line to your %s!")" "$BUILDSCRIPT"
-		plain "$(gettext "Example for GPL\'ed software: license=('GPL').")"
-	fi
-}
-
-write_header_pkginfo() {
-	local builddate=$(date -u "+%s")
-	if [ -n "$PACKAGER" ]; then
-		local packager="$PACKAGER"
-	else
-		local packager="Unknown Packager"
-	fi
-	local size=$(du -sk | awk '{print $1 * 1024}')
-
-	msg2 "$(gettext "Generating .PKGINFO file...")"
-	echo "# Generated by makepkg $myver" >.PKGINFO
-	if [ "$INFAKEROOT" -eq 1 ]; then
-		echo "# using $(fakeroot -v)" >>.PKGINFO
-	fi
-	echo "# $(LC_ALL=C date -u)" >>.PKGINFO
-	echo "pkgname = $1-devel" >>.PKGINFO
-	[ "$SPLITPKG" -eq 1 ] && echo "pkgbase = $pkgbase" >>.PKGINFO
-	echo "pkgver = $pkgver-$pkgrel" >>.PKGINFO
-	echo "pkgdesc = $pkgdesc (Development Headers)" >>.PKGINFO
-	echo "url = $url" >>.PKGINFO
-	echo "builddate = $builddate" >>.PKGINFO
-	echo "packager = $packager" >>.PKGINFO
-	echo "size = $size" >>.PKGINFO
-	if [ -n "$CARCH" ]; then
-		echo "arch = $CARCH" >>.PKGINFO
-	fi
-	if [ "$(check_option force)" = "y" ]; then
-		echo "force = true" >> .PKGINFO
-	fi
-
-	local it
-	for it in "${license[@]}"; do
-		echo "license = $it" >>.PKGINFO
-	done
-
-	echo "depends = $nameofpkg" >>.PKGINFO
-        echo "group = kdemod-devel" >>.PKGINFO
-	echo "group = kdemod-headers" >>.PKGINFO
-	echo "group = kdemod-uninstall" >>.PKGINFO
-
-	for it in "${packaging_options[@]}"; do
-		local ret="$(check_option $it)"
-		if [ "$ret" != "?" ]; then
-			if [ "$ret" = "y" ]; then
-				echo "makepkgopt = $it" >>.PKGINFO
-			else
-				echo "makepkgopt = !$it" >>.PKGINFO
-			fi
-		fi
-	done
-
-	# TODO maybe remove this at some point
-	# warn if license array is not present or empty
-	if [ -z "$license" ]; then
-		warning "$(gettext "Please add a license line to your %s!")" "$BUILDSCRIPT"
-		plain "$(gettext "Example for GPL\'ed software: license=('GPL').")"
-	fi
-}
-
 create_package() {
 	if [ ! -d "$pkgdir" ]; then
 		error "$(gettext "Missing pkg/ directory.")"
@@ -1142,17 +975,16 @@ create_package() {
 		exit 1 # $E_MISSING_PKGDIR
 	fi
 
+	cd "$pkgdir"
+	msg "$(gettext "Creating package...")"
+
 	if [ -z "$1" ]; then
 		nameofpkg="$pkgname"
 	else
 		nameofpkg="$1"
 	fi
 
-	cd "$pkgdir"
 	write_pkginfo $nameofpkg
-
-	cd "$pkgdir"
-	msg "$(gettext "Creating package...")"
 
 	local comp_files=".PKGINFO"
 
@@ -1203,216 +1035,6 @@ create_package() {
 		error "$(gettext "Failed to create package file.")"
 		exit 1 # TODO: error code
 	fi
-}
-
-create_debug_package() {
-	if [ ! -d "$dbgdir" ]; then
-		error "$(gettext "Missing dbg/ directory.")"
-		plain "$(gettext "Aborting...")"
-		exit 1 # $E_MISSING_PKGDIR
-	fi
-
-	if [ -z "$1" ]; then
-		nameofpkg="$pkgname"
-	else
-		nameofpkg="$1"
-	fi
-
-	cd "$dbgdir"
-	write_debug_pkginfo $nameofpkg
-
-	cd "$dbgdir"
-	msg "$(gettext "Creating package...")"
-
-	local comp_files=".PKGINFO"
-
-	# tar it up
-	msg2 "$(gettext "Compressing package...")"
-
-	case "$PKGEXT" in
-		*tar.gz)  EXT=${PKGEXT%.gz} ;;
-		*tar.bz2) EXT=${PKGEXT%.bz2} ;;
-		*tar.xz)  EXT=${PKGEXT%.xz} ;;
-		*) warning "$(gettext "'%s' is not a valid archive extension.")" \
-		"$PKGEXT" ; EXT=$PKGEXT ;;
-	esac
-	local pkg_file="$PKGDEST/${nameofpkg}-debug-${pkgver}-${pkgrel}-${CARCH}${EXT}"
-
-	local ret=0
-
-	# when fileglobbing, we want * in an empty directory to expand to
-	# the null string rather than itself
-	shopt -s nullglob
-	bsdtar -cf - $comp_files * > "$pkg_file" || ret=$?
-	shopt -u nullglob
-
-	if [ $ret -eq 0 ]; then
-		case "$PKGEXT" in
-			*tar.gz)  gzip -f -n "$pkg_file" ;;
-			*tar.bz2) bzip2 -f "$pkg_file" ;;
-			*tar.xz)  xz -z -f "$pkg_file" ;;
-		esac
-		ret=$?
-	fi
-
-	if [ $ret -ne 0 ]; then
-		error "$(gettext "Failed to create debug package file.")"
-		exit 1 # TODO: error code
-	fi
-}
-
-create_header_package() {
-	if [ ! -d "$hdrdir" ]; then
-		error "$(gettext "Missing hdr/ directory.")"
-		plain "$(gettext "Aborting...")"
-		exit 1 # $E_MISSING_PKGDIR
-	fi
-
-	if [ -z "$1" ]; then
-		nameofpkg="$pkgname"
-	else
-		nameofpkg="$1"
-	fi
-
-	cd "$hdrdir"
-	write_header_pkginfo $nameofpkg
-
-	cd "$hdrdir"
-	msg "$(gettext "Creating package...")"
-
-	local comp_files=".PKGINFO"
-
-	# tar it up
-	msg2 "$(gettext "Compressing package...")"
-
-	case "$PKGEXT" in
-		*tar.gz)  EXT=${PKGEXT%.gz} ;;
-		*tar.bz2) EXT=${PKGEXT%.bz2} ;;
-		*tar.xz)  EXT=${PKGEXT%.xz} ;;
-		*) warning "$(gettext "'%s' is not a valid archive extension.")" \
-		"$PKGEXT" ; EXT=$PKGEXT ;;
-	esac
-	local pkg_file="$PKGDEST/${nameofpkg}-${pkgver}-${pkgrel}-${CARCH}${EXT}"
-
-	local ret=0
-
-	# when fileglobbing, we want * in an empty directory to expand to
-	# the null string rather than itself
-	shopt -s nullglob
-	bsdtar -cf - $comp_files * > "$pkg_file" || ret=$?
-	shopt -u nullglob
-
-	if [ $ret -eq 0 ]; then
-		case "$PKGEXT" in
-			*tar.gz)  gzip -f -n "$pkg_file" ;;
-			*tar.bz2) bzip2 -f "$pkg_file" ;;
-			*tar.xz)  xz -z -f "$pkg_file" ;;
-		esac
-		ret=$?
-	fi
-
-	if [ $ret -ne 0 ]; then
-		error "$(gettext "Failed to create header package file.")"
-		exit 1 # TODO: error code
-	fi
-}
-
-create_header2_package() {
-	if [ -z "$1" ]; then
-		nameofpkg="$pkgname"
-	else
-		nameofpkg="$1"
-	fi
-
-	if [ ! -d "$hdrdir" ]; then
-		error "$(gettext "Missing hdr/ directory.")"
-		plain "$(gettext "Aborting...")"
-		exit 1 # $E_MISSING_PKGDIR
-	fi
-
-	cd "$hdrdir"
-	msg "$(gettext "Creating package with header files...")"
-
-	local builddate=$(date -u "+%s")
-	if [ -n "$PACKAGER" ]; then
-		local packager="$PACKAGER"
-	else
-		local packager="Unknown Packager"
-	fi
-	local size=$(du -sk | awk '{print $1 * 1024}')
-
-	# write the .PKGINFO file
-	msg2 "$(gettext "Generating .PKGINFO file...")"
-	echo "# Generated by makepkg $myver" >.PKGINFO
-	if [ "$INFAKEROOT" -eq 1 ]; then
-		echo "# using $(fakeroot -v)" >>.PKGINFO
-	fi
-	echo "# $(LC_ALL=C date -u)" >>.PKGINFO
-	echo "pkgname = $nameofpkg-devel" >>.PKGINFO
-	echo "pkgver = $pkgver-$pkgrel" >>.PKGINFO
-	echo "pkgdesc = $pkgdesc (development files)" >>.PKGINFO
-	echo "url = $url" >>.PKGINFO
-	echo "builddate = $builddate" >>.PKGINFO
-	echo "packager = $packager" >>.PKGINFO
-	echo "size = $size" >>.PKGINFO
-	if [ -n "$CARCH" ]; then
-		echo "arch = $CARCH" >>.PKGINFO
-	fi
-	if [ "$(check_option force)" = "y" ]; then
-		echo "force = true" >> .PKGINFO
-	fi
-
-	local it
-	for it in "${license[@]}"; do
-		echo "license = $it" >>.PKGINFO
-	done
-	
-	echo "depends = $nameofpkg" >>.PKGINFO
-        echo "group = kdemod-devel" >>.PKGINFO
-	echo "group = kdemod-headers" >>.PKGINFO
-
-	for it in "${packaging_options[@]}"; do
-		local ret="$(check_option $it)"
-		if [ "$ret" != "?" ]; then
-			if [ "$ret" = "y" ]; then
-				echo "makepkgopt = $it" >>.PKGINFO
-			else
-				echo "makepkgopt = !$it" >>.PKGINFO
-			fi
-		fi
-	done
-
-	# TODO maybe remove this at some point
-	# warn if license array is not present or empty
-	if [ -z "$license" ]; then
-		warning "$(gettext "Please add a license line to your %s!")" "$BUILDSCRIPT"
-		plain "$(gettext "Example for GPL'ed software: license=('GPL').")"
-	fi
-
-	local comp_files=".PKGINFO"
-
-	# tar it up
-	msg2 "$(gettext "Compressing package...")"
-
-	local TAR_OPT
-	case "$PKGEXT" in
-		*tar.gz)  TAR_OPT="z" ;;
-		*tar.bz2) TAR_OPT="j" ;;
-		*) warning "$(gettext "'%s' is not a valid archive extension.")" \
-		"$PKGEXT" ;;
-	esac
-
-	local pkg_file="$PKGDEST/${nameofpkg}-devel-${pkgver}-${pkgrel}-${CARCH}${PKGEXT}"
-
-	# when fileglobbing, we want * in an empty directory to expand to
-	# the null string rather than itself
-	shopt -s nullglob
-
-	if ! bsdtar -c${TAR_OPT}f "$pkg_file" $comp_files *; then
-		error "$(gettext "Failed to create package file.")"
-		exit 1 # TODO: error code
-	fi
-	shopt -u nullglob
 }
 
 create_srcpackage() {
@@ -1667,8 +1289,8 @@ devel_update() {
 	if [ -n "$newpkgver" ]; then
 		if [ "$newpkgver" != "$pkgver" ]; then
 			if [ -f "$BUILDFILE" -a -w "$BUILDFILE" ]; then
-				sed -i  "s/^pkgver=[^ ]*/pkgver=$newpkgver/" "$BUILDFILE"
-				sed -i  "s/^pkgrel=[^ ]*/pkgrel=1/" "$BUILDFILE"
+				sed -i "s/^pkgver=[^ ]*/pkgver=$newpkgver/" "$BUILDFILE"
+				sed -i "s/^pkgrel=[^ ]*/pkgrel=1/" "$BUILDFILE"
 				source "$BUILDFILE"
 			fi
 		fi
@@ -1678,7 +1300,7 @@ devel_update() {
 backup_package_variables() {
 	for var in ${splitpkg_overrides[@]}; do
 		indirect="${var}_backup"
-		eval "${indirect}=(\${$var[@]})"
+		eval "${indirect}=(\"\${$var[@]}\")"
 	done
 }
 
@@ -1686,16 +1308,11 @@ restore_package_variables() {
 	for var in ${splitpkg_overrides[@]}; do
 		indirect="${var}_backup"
 		if [ -n "${!indirect}" ]; then
-			eval "${var}=(\${$indirect[@]})"
+			eval "${var}=(\"\${$indirect[@]}\")"
 		else
 			unset ${var}
 		fi
 	done
-
-	# pkgdesc gets restored as an array - convert back to a string
-	local pkgdesc_backup="${pkgdesc[@]}"
-	unset pkgdesc
-	pkgdesc=${pkgdesc_backup}
 }
 
 # getopt like parser
@@ -1799,6 +1416,7 @@ usage() {
 	echo "$(gettext "  -e, --noextract  Do not extract source files (use existing src/ dir)")"
 	echo "$(gettext "  -f, --force      Overwrite existing package")"
 	echo "$(gettext "  -g, --geninteg   Generate integrity checks for source files")"
+	echo "$(gettext "      --skipinteg  Do not fail when integrity checks are missing")"
 	echo "$(gettext "  -h, --help       This help")"
 	echo "$(gettext "  -i, --install    Install package after successful build")"
 	echo "$(gettext "  -L, --log        Log package build process")"
@@ -1809,8 +1427,6 @@ usage() {
 	# fix flyspray feature request #2978
 	echo "$(gettext "  -R, --repackage  Repackage contents of the package without rebuilding")"
 	echo "$(gettext "  -s, --syncdeps   Install missing dependencies with pacman")"
-	echo "$(gettext "  -t, --splitdbg   Put debugging symbols into their own package")"
-	echo "$(gettext "  -u, --splithdr   Put development headers into their own package")"
 	echo "$(gettext "      --allsource  Generate a source-only tarball including downloaded sources")"
 	echo "$(gettext "      --asroot     Allow makepkg to run as root user")"
 	echo "$(gettext "      --holdver    Prevent automatic version bumping for development PKGBUILDs")"
@@ -1843,14 +1459,14 @@ if [ ! $(type -t gettext) ]; then
 	}
 fi
 
-ARGLIST=$@
+ARGLIST=("$@")
 
 # Parse Command Line Options.
-OPT_SHORT="AbcCdefFghiLmop:rRstuV"
-OPT_LONG="allsource,asroot,ignorearch,builddeps,clean,cleancache,nodeps"
+OPT_SHORT="AcCdefFghiLmop:rRsV"
+OPT_LONG="allsource,asroot,ignorearch,clean,cleancache,nodeps"
 OPT_LONG="$OPT_LONG,noextract,force,forcever:,geninteg,help,holdver"
-OPT_LONG="$OPT_LONG,install,log,nocolor,nobuild,rmdeps,repackage,source"
-OPT_LONG="$OPT_LONG,syncdeps,splitdbg,splithdr,version,config:"
+OPT_LONG="$OPT_LONG,install,log,nocolor,nobuild,rmdeps,repackage,skipinteg"
+OPT_LONG="$OPT_LONG,source,syncdeps,version,config:"
 # Pacman Options
 OPT_LONG="$OPT_LONG,noconfirm,noprogressbar"
 OPT_TEMP="$(parse_options $OPT_SHORT $OPT_LONG "$@" || echo 'PARSE_OPTIONS FAILED')"
@@ -1889,10 +1505,9 @@ while true; do
 		-p)               shift; BUILDFILE=$1 ;;
 		-r|--rmdeps)      RMDEPS=1 ;;
 		-R|--repackage)   REPKG=1 ;;
+		--skipinteg)      SKIPINTEG=1 ;;
 		--source)         SOURCEONLY=1 ;;
 		-s|--syncdeps)    DEP_BIN=1 ;;
-		-t|--splitdbg)    SPLIT_DBG=1 ;;
-		-u|--splithdr)    SPLIT_HDR=1 ;;
 
 		-h|--help)        usage; exit 0 ;; # E_OK
 		-V|--version)     version; exit 0 ;; # E_OK
@@ -1920,10 +1535,9 @@ else
 fi
 
 # Source user-specific makepkg.conf overrides
-# (we dont need that)
-# if [ -r ~/.makepkg.conf ]; then
-# 	source ~/.makepkg.conf
-# fi
+if [ -r ~/.makepkg.conf ]; then
+	source ~/.makepkg.conf
+fi
 
 # check if messages are to be printed using color
 if [ -t 2 -a ! "$USE_COLOR" = "n" -a "$(check_buildenv color)" = "y" ]; then
@@ -1948,7 +1562,7 @@ if [ "$CLEANCACHE" -eq 1 ]; then
 	if [ -n "$SRCDEST" -a "$SRCDEST" != "$startdir" ]; then
 		msg "$(gettext "Cleaning up ALL files from %s.")" "$SRCDEST"
 		echo -n "$(gettext "    Are you sure you wish to do this? ")"
-		echo -n "$(gettext "[Y/n]")"
+		echo -n "$(gettext "[y/N]")"
 		read answer
 		answer=$(echo $answer | tr '[:lower:]' '[:upper:]')
 		if [ "$answer" = "$(gettext "YES")" -o "$answer" = "$(gettext "Y")" ]; then
@@ -2118,67 +1732,21 @@ if [ "$INFAKEROOT" -eq 1 ]; then
 		if [ "$PKGFUNC" -eq 0 ]; then
 			if [ "$REPKG" -eq 0 ]; then
 				run_build
-				if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
-					tidy_install
-				fi
+				tidy_install
 			fi
 		else
 			run_package
 			tidy_install
 		fi
-		if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
-			create_package
-			# second check, if there are any files
-			check_dbg_files=`find $dbgdir/ -name "*.debug"`
-			if [ -z "$check_dbg_files" ]; then
-				msg "$(gettext "No .debug files found, skipping creation of the debug pkg...")"
-			else
-				create_debug_package
-			fi
-			
-			# second check, if there are any files
-			check_hdr_files=`find $hdrdir/ -name "include"`
-			if [ -z "$check_hdr_files" ]; then
-				msg "$(gettext "Skipping creation of the devel pkg...")"
-			else
-				create_header_package
-			fi
-		else
-			create_package
-		fi
+		create_package
 	else
 		for pkg in ${pkgname[@]}; do
-			pkgdir="$pkgdir/pkg_${pkg}"
+			pkgdir="$pkgdir/$pkg"
 			mkdir -p "$pkgdir"
-			dbgdir="$startdir/dbg/dbg_${pkg}"
-			[ ! -d "$dbgdir" ] && mkdir -p "$dbgdir"
-			hdrdir="$startdir/hdr/hdr_${pkg}"
-			[ ! -d "$hdrdir" ] && mkdir -p "$hdrdir"
 			backup_package_variables
 			run_package $pkg
 			tidy_install
-
-			if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
-				create_package $pkg
-				# second check, if there are any files
-				check_dbg_files=`find $dbgdir/ -name "*.debug"`
-				if [ -z "$check_dbg_files" ]; then
-					msg "$(gettext "No .debug files found, skipping creation of the debug pkg...")"
-				else
-					create_debug_package $pkg
-				fi
-				# third check, headers
-				check_hdr_files=`find $hdrdir/ -name "include"`
-				if [ -z "$check_hdr_files" ]; then
-					msg "$(gettext "Skipping creation of the devel pkg...")"
-				else
-					create_header_package $pkg
-				fi
-
-			else
-				create_package $pkg
-			fi
-
+			create_package $pkg
 			restore_package_variables
 			pkgdir="${pkgdir%/*}"
 		done
@@ -2231,8 +1799,6 @@ umask 0022
 
 # get back to our src directory so we can begin with sources
 mkdir -p "$srcdir"
-mkdir -p "$dbgdir"
-mkdir -p "$hdrdir"
 cd "$srcdir"
 
 if [ "$NOEXTRACT" -eq 1 ]; then
@@ -2284,58 +1850,15 @@ else
 			elif [ "$REPKG" -eq 0 ]; then
 				tidy_install
 			fi
-			
-			if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
-				create_package
-				# second check, if there are any files
-				check_dbg_files=`find $dbgdir/ -name "*.debug"`
-				if [ -z "$check_dbg_files" ]; then
-					msg "$(gettext "No .debug files found, skipping creation of debug packages...")"
-				else
-					create_debug_package
-				fi
-				# second check, if there are any files
-				check_hdr_files=`find $hdrdir/ -name "include"`
-				if [ -z "$check_hdr_files" ]; then
-					msg "$(gettext "Skipping creation of the devel pkg...")"
-				else
-					create_header_package
-				fi
-			else
-				create_package
-			fi
-
+			create_package
 		else
 			for pkg in ${pkgname[@]}; do
-				pkgdir="$pkgdir/pkg_$pkg"
+				pkgdir="$pkgdir/$pkg"
 				mkdir -p "$pkgdir"
-				dbgdir="$startdir/dbg/dbg_${pkg}"
-				[ ! -d "$dbgdir" ] && mkdir -p "$dbgdir"
-				hdrdir="$startdir/hdr/hdr_${pkg}"
-				[ ! -d "$hdrdir" ] && mkdir -p "$hdrdir"
 				backup_package_variables
 				run_package $pkg
 				tidy_install
-
-				if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
-					create_package $pkg
-					# second check, if there are any files
-					check_dbg_files=`find $dbgdir/ -name "*.debug"`
-					if [ -z "$check_dbg_files" ]; then
-						msg "$(gettext "No .debug files found, skipping creation of debug packages...")"
-					else
-						create_debug_package $pkg
-					fi
-					check_hdr_files=`find $hdrdir/ -name "include"`
-					if [ -z "$check_hdr_files" ]; then
-						msg "$(gettext "Skipping creation of the devel pkg...")"
-					else
-						create_header_package $pkg
-					fi
-				else
-					create_package $pkg
-				fi
-
+				create_package $pkg
 				restore_package_variables
 				pkgdir="${pkgdir%/*}"
 			done
@@ -2350,9 +1873,9 @@ else
 		msg "$(gettext "Entering fakeroot environment...")"
 
 		if [ -n "$newpkgver" ]; then
-			fakeroot -- $0 --forcever $newpkgver -F $ARGLIST || exit $?
+			fakeroot -- $0 --forcever $newpkgver -F "${ARGLIST[@]}" || exit $?
 		else
-			fakeroot -- $0 -F $ARGLIST || exit $?
+			fakeroot -- $0 -F "${ARGLIST[@]}" || exit $?
 		fi
 	fi
 fi
