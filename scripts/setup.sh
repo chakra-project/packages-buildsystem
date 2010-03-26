@@ -3,8 +3,6 @@
 # setup,sh
 # GPL - jan.mette@berlin.de
 
-printf "\033[01;37m\033[1;37m:: starting up, this could take some secs..."
-
 
 
 #
@@ -22,66 +20,13 @@ PKGSOURCE="http://konnektion.ath.cx/repo"
 # the primary branch, either core or core-testing
 PRIMARYCORE="core-testing"
 
-
-
-#
-# setup
-#
+# the root of everything
 BASENAME="buildroot"
-CURDIR_CHECK=`pwd`
-CURDIR=`echo $CURDIR_CHECK`
-REPO=`echo $1`
-ARCH=`echo $2`
-USER_CHECK=`whoami`
-USER=`echo $USER_CHECK`
-USERID=`getent passwd $USER | cut -d: -f3`
-PROGRESSBAR="/tmp/chakra-buildsystem.progress"
-
-BASEPATH=`echo $CURDIR/$BASENAME`
-REPO_CHECK=`svn ls $SVNBASE | grep -v "_" | sed 's/\///g'`
-SVN_BUILDSYS="$SVNBASE/_buildscripts"
-SVN_REPO="$SVNBASE/${REPO}"
-
-mkdir -p $BASEPATH
-rm -rf $BASEPATH/pacman.conf
 
 
 
 #
-# detect host
-#
-if [ -e "/etc/arch-release" ] ; then
-	echo ":: running on arch linux"
-elif [ -e "/etc/debian_version" ] ; then
-	DEB_VER=`cat /etc/debian_version`
-	echo ":: running on debian $DEB_VER"
-	unset DEB_VER
-else
-	echo ":: running on a unsupported linux distro"
-	echo ":: (everything could happen from here...)"
-fi
-
-
-
-#
-# setup & check pacman
-#
-if [ -e "/usr/bin/pacman.static" ] ; then
-	PACMAN_BIN="pacman.static"
-	echo ":: using pacman.static"
-elif [ -e "/usr/bin/pacman" ] ; then
-	PACMAN_BIN="pacman"
-	echo ":: using pacman"
-else
-	echo ":: you need pacman on your host system."
-	echo " "
-	exit 0
-fi
-
-
-
-#
-# helper functions
+# output functions
 #
 get_colors() {
     _r="\033[00;31m"
@@ -147,6 +92,127 @@ status_done() {
 	echo -e "\033[1;32m DONE \033[1;0m"
 }
 
+
+msg ":: starting up, this could take some secs..."
+
+
+#
+# setup
+#
+CURDIR_CHECK=`pwd`
+CURDIR=`echo $CURDIR_CHECK`
+REPO=`echo $1`
+ARCH=`echo $2`
+USER_CHECK=`whoami`
+USER=`echo $USER_CHECK`
+USERID=`getent passwd $USER | cut -d: -f3`
+PROGRESSBAR="/tmp/chakra-buildscripts.progress"
+
+BASEPATH=`echo $CURDIR/$BASENAME`
+REPO_CHECK=`svn ls $SVNBASE | grep -v "_" | sed 's/\///g'`
+SVN_BUILDSYS="$SVNBASE/_buildscripts"
+SVN_REPO="$SVNBASE/${REPO}"
+
+mkdir -p $BASEPATH
+rm -rf $BASEPATH/pacman.conf
+
+
+
+#
+# "detect" distro
+#
+if [ -e "/etc/arch-release" ] ; then
+	echo ":: running on arch linux"
+	DISTRO="arch"
+elif [ -e "/etc/debian_version" ] ; then
+	DEB_VER=`cat /etc/debian_version`
+	echo ":: running on debian $DEB_VER"
+	unset DEB_VER
+	DISTRO="debian" # debian stable
+else
+	echo ":: running on a unsupported linux distro"
+	echo ":: (everything could happen from here...)"
+	DISTRO="unsupported"
+fi
+
+
+
+#
+# look for pacman
+#
+if [ -e "/usr/bin/pacman.static" ] ; then
+	PACMAN_BIN="pacman.static"
+	echo ":: using pacman.static"
+elif [ -e "/usr/bin/pacman" ] ; then
+	PACMAN_BIN="pacman"
+	echo ":: using pacman"
+else
+	echo ":: you need either pacman or pacman.static (in /usr/bin)"
+	echo " "
+	exit 0
+fi
+
+
+
+#
+# helper functions
+#
+# messages
+title() {
+	local mesg=$1; shift
+	echo " "
+	printf "\033[1;0m\033[1;1m ${mesg}\033[1;0m\n"
+	echo " "
+}
+
+title2() {
+	local mesg=$1; shift
+	printf "\033[1;33m>>\033[1;0m\033[1;1m ${mesg}\033[1;0m\n"
+}
+
+msg() {
+	local mesg=$1; shift
+	echo -e "\033[1;32m::\033[1;0m\033[1;0m ${mesg}\033[1;0m"
+}
+
+question() {
+	local mesg=$1; shift
+	echo -e -n "\033[1;32m::\033[1;0m\033[1;0m ${mesg}\033[1;0m"
+}
+
+notice() {
+	local mesg=$1; shift
+	echo -e -n ":: ${mesg}\n"
+}
+
+warning() {
+	local mesg=$1; shift
+	printf "\033[1;33m::\033[1;0m\033[1;1m ${mesg}\033[1;0m\n"
+}
+
+error() {
+	local mesg=$1; shift
+	printf "\033[1;31m::\033[1;0m\033[1;0m ${mesg}\033[1;0m\n"
+}
+
+newline() {
+	echo " "
+}
+
+status_start() {
+	local mesg=$1; shift
+	echo -e -n "\033[1;32m::\033[1;0m\033[1;0m ${mesg}\033[1;0m"
+}
+
+status_ok() {
+	echo -e "\033[1;32m OK \033[1;0m"
+}
+
+status_done() {
+	echo -e "\033[1;32m DONE \033[1;0m"
+}
+
+# mounting
 mount_special() {
 	sudo mount -v /dev/ $BASEPATH/${REPO}-${ARCH}/chroot/dev/ --bind &>/dev/null
 	sudo mount -v /sys/ $BASEPATH/${REPO}-${ARCH}/chroot/sys/ --bind &>/dev/null
@@ -161,6 +227,7 @@ umount_special() {
 	sudo umount -v $BASEPATH/${REPO}-${ARCH}/chroot/var/cache/pacman/pkg &>/dev/null
 }
 
+# needs to be simplified
 create_pacmanconf() {
 	echo " " >> $BASEPATH/pacman.conf
 	echo "[options]" >> $BASEPATH/pacman.conf
@@ -246,6 +313,8 @@ create_pacmanconf() {
 	fi
 }
 
+# 
+
 echo ":: creating pacman.conf"
 create_pacmanconf
 
@@ -330,35 +399,6 @@ create_chroot()
 {
 	newline
 	title "Creating Chroot: ${REPO}-${ARCH}"
-	
-# 	newline
-# 	msg "Do you want to install KDEmod into the chroot?"
-# 	msg '(in this case the script will run "pacman -S kdemod automoc4")'
-# 	msg "Answer with no here if you are building a KDEmod [core|testing|unstable] repo from scratch."
-# 	newline
-# 	question "(y/n) "
-# 
-# 	read yn
-# 	case $yn in
-# 		y* | Y* ) 
-# 			INST_KDEMOD="1"
-# 			if [ -z `grep "kdemod-${REPO}" $BASEPATH/pacman.conf` ] ; then
-# 				newline
-# 				error "Sorry, you need to enable kdemod-${REPO} in $BASEPATH/pacman.conf before running this script."
-# 				error "Exiting..."
-# 				newline
-# 				exit 1
-# 			fi
-# 		;;
-# 		
-# 		[nN]* )   
-# 			INST_KDEMOD="0"
-# 		;;
-# 		
-# 		* ) 
-# 		echo "Enter yes or no" 
-# 		;;
-# 	esac
 
 	newline
 	status_start "creating special dirs"
@@ -376,6 +416,7 @@ create_chroot()
 		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/var/lib/pacman &>/dev/null
 	status_done
 
+	# this is really dumb
 	if [ "$REPO" = "core" ] ; then
 
 		msg "installing core packages"
@@ -563,18 +604,24 @@ create_chroot()
 		sudo chmod 0440 $BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 	status_done
 
+	status_start "setting up device permissions"
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/console
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/null
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/zero
+	status_done
+
 	status_start "unmounting special dirs"
 		umount_special
 	status_done
 }
 
 ########################################################################################################
-# create the buildsystem
+# create the buildscripts
 ########################################################################################################
 create_buildscripts()
 {
 	newline
-	title "Creating buildsystem"
+	title "Installing buildscripts"
 
 	status_start "creating needed directories"
 		for repo in ${REPOS}
@@ -586,9 +633,9 @@ create_buildscripts()
 	status_done
 	
 	if [ -d "$BASEPATH/_buildscripts" ] ; then
-		notice "buildsystem already installed"
+		notice "buildscripts already installed"
 	else
-		status_start "fetching buildsystem from SVN"
+		status_start "fetching buildscripts from SVN"
 		svn co $SVN_BUILDSYS $BASEPATH/_buildscripts &>/dev/null
 		status_done
 	fi
@@ -609,12 +656,12 @@ create_buildscripts()
 }
 
 ########################################################################################################
-# preconfigure the buildsystem
+# preconfigure the buildscripts
 ########################################################################################################
 preconfigure_buildscripts()
 {
 	newline
-	title "Preconfiguring buildsystem"
+	title "Preconfiguring buildscripts"
 	
 	status_start "creating directories"
 		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/{_sources,_repo/{repo,build}} &>/dev/null
@@ -639,12 +686,12 @@ preconfigure_buildscripts()
 }
 
 ########################################################################################################
-# configure the buildsystem
+# configure the buildscripts
 ########################################################################################################
 configure_buildscripts()
 {
 	newline
-	title "Configuring buildsystem for: ${REPO}-${ARCH}"
+	title "Configuring buildscripts for: ${REPO}-${ARCH}"
 	
 	status_start "creating config files"
 		cp -v $BASEPATH/_buildscripts/skel/${REPO}-cfg.conf $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf &>/dev/null
@@ -682,7 +729,7 @@ configure_buildscripts()
 		sed -i -e s#_build_work.*#_build_work=\"/home/$USER/$BASENAME/${REPO}/\"#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 	status_done
 
-	status_start "setting up buildsystem config"
+	status_start "setting up buildscripts config"
 		sed -i -e s#_build_autoinstall.*#_build_autoinstall=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s#_build_autodepends.*#_build_autodepends=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s,_build_configured.*,_build_configured=1,g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
