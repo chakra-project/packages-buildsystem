@@ -664,7 +664,7 @@ preconfigure_buildscripts()
 	title "Preconfiguring buildscripts"
 	
 	status_start "creating directories"
-		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/{_sources,_repo/{repo,build}} &>/dev/null
+		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/{_sources,_temp,_repo/{remote,local}} &>/dev/null
 		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/_buildscripts &>/dev/null
 		mkdir -p $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/_sources &>/dev/null
 	status_done
@@ -720,7 +720,7 @@ configure_buildscripts()
 
 	status_start "setting up makepkg config"
 		sed -i -e "s,#MAKEFLAGS.*,MAKEFLAGS=\"-j$SETUP_MAKEFLAGS\",g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
-		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/${REPO}/_repo/build\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf 
+		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/${REPO}/_repo/local\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf 
 		sed -i -e s,#SRCDEST.*,SRCDEST=\"/home/$USER/$BASENAME/${REPO}/_sources\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
 		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
 	status_done
