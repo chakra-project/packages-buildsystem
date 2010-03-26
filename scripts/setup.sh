@@ -593,14 +593,30 @@ create_chroot()
 		sudo cp /etc/pacman.d/mirrorlist $BASEPATH/${REPO}-${ARCH}/chroot/etc/pacman.d/ &>/dev/null
 	status_done
 
+	newline
+	title "User setup"
+
 	status_start "adding user: $USER"
 		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot useradd -g users -u $USERID -G audio,video,optical,storage,log -m $USER &>/dev/null
 	status_done
+
+		warning "you will be asked for your password"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+		
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot passwd $USER
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
 
 	status_start "setting up /etc/sudoers"
 		sudo chmod 777 $BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 		sudo echo >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 		sudo echo "$USER     ALL=NOPASSWD: /usr/bin/pacman" >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
+		sudo echo "$USER     ALL=(ALL) ALL" >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 		sudo chmod 0440 $BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 	status_done
 

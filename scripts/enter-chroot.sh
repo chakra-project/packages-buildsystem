@@ -43,7 +43,7 @@ fi
 	sudo mount -v /proc/ $CURDIR/$REPO/chroot/proc/ --bind &>/dev/null
 	sudo mount -v $CURDIR/_buildscripts/ $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts --bind &>/dev/null
 	sudo mount -v $CURDIR/_sources/ $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources --bind &>/dev/null
-	sudo mount -v /var/cache/pacman/pkg $CURDIR/$REPO/chroot/var/cache/pacman/pkg --bind &>/dev/null
+	sudo mount -v $CURDIR/_cache/ $CURDIR/$REPO/chroot/var/cache/pacman/pkg --bind &>/dev/null
 	sudo cp -vf /etc/mtab $CURDIR/$REPO/chroot/etc/mtab &>/dev/null
 	sudo cp -vf /etc/resolv.conf $CURDIR/$REPO/chroot/etc/resolv.conf &>/dev/null
 
