@@ -147,8 +147,8 @@ elif [ -e "/usr/bin/pacman" ] ; then
 	PACMAN_BIN="pacman"
 	echo ":: using pacman"
 else
-	echo ":: you need either pacman or pacman.static (in /usr/bin)"
-	echo " "
+	echo ":: you need either pacman or pacman.static in /usr/bin"
+	echo ":: can not proceed, stopping... "
 	exit 0
 fi
 
@@ -691,6 +691,7 @@ preconfigure_buildscripts()
 
 	status_start "installing chroot configs"
 		cp -f $BASEPATH/_buildscripts/skel/bashrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.bashrc
+		cp -f $BASEPATH/_buildscripts/skel/screenrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.screenrc
 	status_done
 
 	status_start "installing chroot scripts"
@@ -828,18 +829,12 @@ else
 fi
 
 clear
-title "KDEmod Build Enviroment - Setup-o-Matic v$VER"
-
-msg "This script will create a dir called $BASENAME in the current directory"
-msg "and install a chrooted build environment for the repo: ${REPO}"
-msg "Please do not move this installer script after creating the first chroot."
-msg "You can use it later to install/reinstall/uninstall chroots/repos."
+title "Chakra buildroot - setup-o-matic v$VER"
+warning "Root directory        : $BASEPATH"
+notice "                        (^^the root dir, containing everything created by this script^^)"
 newline
-warning "Installation dir: $BASEPATH"
-notice "                  (^^the base dir containing everything related to KDEmod^^)"
-newline
-warning "Repository dir: $BASEPATH/${REPO}-${ARCH}"
-notice "                  (^^the installation directory of this repository^^)"
+warning "Installation directory: $BASEPATH/${REPO}-${ARCH}"
+notice "                        (^^the root dir of the currently selected repository^^)"
 newline
 question "Do you want to continue (y/n) "
 
