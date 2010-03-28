@@ -620,9 +620,9 @@ create_chroot()
 	status_done
 
 	status_start "setting up device permissions"
-		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/console
-		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/null
-		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/zero
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/console &>/dev/null
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/null &>/dev/null
+		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot chmod 777 /dev/zero &>/dev/null
 	status_done
 
 	status_start "unmounting special dirs"
@@ -691,6 +691,7 @@ preconfigure_buildscripts()
 	status_start "installing chroot configs"
 		cp -f $BASEPATH/_buildscripts/skel/bashrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.bashrc
 		cp -f $BASEPATH/_buildscripts/skel/screenrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.screenrc
+		cp -f $BASEPATH/_buildscripts/skel/locale.gen $BASEPATH/${REPO}-${ARCH}/chroot/etc/locale.gen
 	status_done
 
 	status_start "installing chroot scripts"
