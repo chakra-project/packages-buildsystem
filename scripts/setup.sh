@@ -41,7 +41,7 @@ get_colors() {
 title() {
 	local mesg=$1; shift
 	echo " "
-	printf "\033[1;0m\033[1;1m ${mesg}\033[1;0m\n"
+	printf "\033[1;0m>>\033[1;1m ${mesg}\033[1;0m\n"
 	echo " "
 }
 
