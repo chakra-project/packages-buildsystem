@@ -615,8 +615,7 @@ create_chroot()
 	status_start "setting up /etc/sudoers"
 		sudo chmod 777 $BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 		sudo echo >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
-		sudo echo "$USER     ALL=NOPASSWD: /usr/bin/pacman" >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
-		sudo echo "$USER     ALL=(ALL) ALL" >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
+		sudo echo "$USER     ALL=(ALL) NOPASSWD: ALL" >>$BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 		sudo chmod 0440 $BASEPATH/${REPO}-${ARCH}/chroot/etc/sudoers
 	status_done
 
