@@ -691,7 +691,6 @@ preconfigure_buildscripts()
 	status_start "installing chroot configs"
 		cp -f $BASEPATH/_buildscripts/skel/bashrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.bashrc
 		cp -f $BASEPATH/_buildscripts/skel/screenrc $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/.screenrc
-		cp -f $BASEPATH/_buildscripts/skel/locale.gen $BASEPATH/${REPO}-${ARCH}/chroot/etc/locale.gen
 	status_done
 
 	status_start "installing chroot scripts"
