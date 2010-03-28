@@ -600,7 +600,7 @@ create_chroot()
 		sudo chroot $BASEPATH/${REPO}-${ARCH}/chroot useradd -g users -u $USERID -G audio,video,optical,storage,log -m $USER &>/dev/null
 	status_done
 
-		warning "you will be asked for your password"
+		warning "you will be asked to enter a password for the chroot user"
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
