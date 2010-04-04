@@ -27,10 +27,10 @@ do_makedeps() {
 	MISSING_MAKEDEPS=`resolve_deps ${makedepends[@]}`
 	if [ -z "$MISSING_MAKEDEPS" ]; then
 		msg "All makedepends seem to be installed!"
-		sleep 2
+		sleep 0.5
 	else
 		msg "Installing missing makedepends: $MISSING_MAKEDEPS"
-		sleep 2
+		sleep 0.5
 		sudo pacman -Sy $MISSING_MAKEDEPS --noconfirm &>/dev/null
 	fi
 }	
@@ -40,10 +40,10 @@ do_deps() {
 	MISSING_DEPS=`resolve_deps ${depends[@]}`
 	if [ -z "$MISSING_DEPS" ]; then
 		msg "All depends seem to be installed!"
-		sleep 2
+		sleep 0.5
 	else
 		msg "Installing missing depends: $MISSING_DEPS"
-		sleep 2
+		sleep 0.5
 		sudo pacman -Sy $MISSING_DEPS --noconfirm &>/dev/null
 	fi
 }
