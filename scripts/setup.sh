@@ -1,7 +1,9 @@
 #!/bin/bash
 #
 # setup,sh
-# GPL - jan.mette@berlin.de
+# (c) 2010.05 - Phil Miller <philm[at]chakra-project[dot]org
+# (c) 2010.01-04 - Jan Mette
+# GPL
 
 
 
@@ -9,7 +11,7 @@
 # globals
 #
 # version
-VER="0.4.4.50"
+VER="0.4.4.51"
 
 # svn root dir (that contains the packages and _buildscripts dirs)
 SVNBASE="svn://konnektion.ath.cx:1235/packages"
@@ -279,9 +281,9 @@ create_pacmanconf() {
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
-		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		echo " " >> $BASEPATH/pacman.conf
+		#echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		#echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		#echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO" = "apps" ] ; then
 		echo "[core]" >> $BASEPATH/pacman.conf
@@ -511,6 +513,22 @@ create_chroot()
 		newline
 
 	elif [ "$REPO" = "desktop-testing" ] ; then
+		# NOTE: tmp fix.
+                # sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH} -Sy base-devel cmake subversion git sudo xorg boost vi vim ccache rsync
+
+		msg "installing core-testing packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S $COREPKGS 
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
 
 		msg "installing platform packages"
 		warning "follow pacman instructions from here"
@@ -541,6 +559,22 @@ create_chroot()
 		newline
 
 	elif [ "$REPO" = "apps-testing" ] ; then
+		# NOTE: tmp fix.
+                # sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH} -Sy base-devel cmake subversion git sudo xorg boost vi vim ccache rsync
+
+		msg "installing core-testing packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S $COREPKGS 
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
 
 		msg "installing platform packages"
 		warning "follow pacman instructions from here"
