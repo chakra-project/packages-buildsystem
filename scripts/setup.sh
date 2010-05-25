@@ -281,9 +281,9 @@ create_pacmanconf() {
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
-		#echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		#echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		#echo " " >> $BASEPATH/pacman.conf
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO" = "apps" ] ; then
 		echo "[core]" >> $BASEPATH/pacman.conf
