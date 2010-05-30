@@ -47,9 +47,9 @@ msg "updating makepkg"
 	for repo in $REPOS
 	do
 		if [ "$repo" = "desktop-i686" ] || [ "$repo" = "desktop-testing-i686" ] || [ "$repo" = "desktop-x86_64" ] || [ "$repo" = "desktop-testing-x86_64" ]; then
-		cp -fv $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g'`
+		cp -fv $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g'`/makepkg
 	else
-		cp -fv $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g' | sed 's/-x86_64//g'`
+		cp -fv $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g' | sed 's/-x86_64//g'`/makepkg
 	fi
 	done
 
