@@ -11,7 +11,7 @@
 # globals
 #
 # version
-VER="0.4.4.52"
+VER="0.4.4.53"
 
 # svn root dir (that contains the packages and _buildscripts dirs)
 SVNBASE="svn://konnektion.ath.cx:1235/packages"
@@ -793,7 +793,7 @@ configure_buildscripts()
 		sed -i -e s#_build_autoinstall.*#_build_autoinstall=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s#_build_autodepends.*#_build_autodepends=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s,_build_configured.*,_build_configured=1,g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
-		sed -i -e "s/___ARCH___/$BUILDARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
+		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 	status_done
 	
 	status_start "finishing..."

@@ -46,7 +46,11 @@ msg "updating _buildscripts"
 msg "updating makepkg"
 	for repo in $REPOS
 	do
+		if [ "$repo" = "desktop-i686" ] || [ "$repo" = "desktop-testing-i686" ] || [ "$repo" = "desktop-x86_64" ] || [ "$repo" = "desktop-testing-x86_64" ]; then
+		cp -f $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/$repo
+	else
 		cp -f $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/$repo
+	fi
 	done
 
 msg "all done"
