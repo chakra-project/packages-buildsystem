@@ -38,7 +38,7 @@ msg "updating _buildscripts"
 	popd &>/dev/null
 	
 	rm -rf $CURDIR/*.sh
-	cp -v $CURDIR/_buildscripts/scripts/*.sh $CURDIR/
+	cp $CURDIR/_buildscripts/scripts/*.sh $CURDIR/
 	rm -rf $CURDIR/create-builden*.sh
 	rm -rf $CURDIR/setu*.sh
 	chmod +x *.sh
@@ -47,9 +47,9 @@ msg "updating makepkg"
 	for repo in $REPOS
 	do
 		if [ "$repo" = "desktop-i686" ] || [ "$repo" = "desktop-testing-i686" ] || [ "$repo" = "desktop-x86_64" ] || [ "$repo" = "desktop-testing-x86_64" ]; then
-		cp -fv $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g'`/makepkg
+		cp -f $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g'`/makepkg
 	else
-		cp -fv $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g' | sed 's/-x86_64//g'`/makepkg
+		cp -f $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g' | sed 's/-x86_64//g'`/makepkg
 	fi
 	done
 
