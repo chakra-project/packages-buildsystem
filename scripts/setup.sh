@@ -11,7 +11,7 @@
 # globals
 #
 # version
-VER="0.4.4.51"
+VER="0.4.4.52"
 
 # svn root dir (that contains the packages and _buildscripts dirs)
 SVNBASE="svn://konnektion.ath.cx:1235/packages"
@@ -105,6 +105,11 @@ CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 REPO=`echo $1`
 ARCH=`echo $2`
+if [ "$ARCH" = "x86_64" ] ; then
+   BUILDARCH="x86-64"
+else
+   BUILDARCH="$ARCH"
+fi
 USER_CHECK=`whoami`
 USER=`echo $USER_CHECK`
 USERID=`getent passwd $USER | cut -d: -f3`
@@ -719,7 +724,12 @@ preconfigure_buildscripts()
 	status_done
 	
 	status_start "installing makepkg"
+	if [ "$REPO" = "desktop" ] || [ "$REPO" = "desktop-testing" ]; then
+		cp $BASEPATH/_buildscripts/makepkg-chakra $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/makepkg &>/dev/null
+	else
 		cp $BASEPATH/_buildscripts/makepkg $BASEPATH/${REPO}-${ARCH}/chroot/home/$USER/$BASENAME/${REPO}/makepkg &>/dev/null
+	fi
+
 	status_done
 
 	status_start "installing chroot configs"
@@ -772,7 +782,7 @@ configure_buildscripts()
 		sed -i -e "s,#MAKEFLAGS.*,MAKEFLAGS=\"-j$SETUP_MAKEFLAGS\",g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
 		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/${REPO}/_repo/local\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf 
 		sed -i -e s,#SRCDEST.*,SRCDEST=\"/home/$USER/$BASENAME/${REPO}/_sources\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
-		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
+		sed -i -e "s/___ARCH___/$BUILDARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
 	status_done
 
 	status_start "setting up repo config"
@@ -783,7 +793,7 @@ configure_buildscripts()
 		sed -i -e s#_build_autoinstall.*#_build_autoinstall=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s#_build_autodepends.*#_build_autodepends=1#g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 		sed -i -e s,_build_configured.*,_build_configured=1,g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
-		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
+		sed -i -e "s/___ARCH___/$BUILDARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-cfg.conf
 	status_done
 	
 	status_start "finishing..."
