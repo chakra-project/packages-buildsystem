@@ -11,7 +11,7 @@
 # globals
 #
 # version
-VER="0.4.4.54"
+VER="0.4.4.55"
 
 # svn root dir (that contains the packages and _buildscripts dirs)
 SVNBASE="svn://konnektion.ath.cx:1235/packages"
@@ -466,7 +466,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 grep gettext repo-clean qt
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -482,7 +482,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 grep gettext repo-clean qt
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -497,7 +497,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman kdebase-workspace phonon-xine
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 grep gettext repo-clean kdebase-workspace phonon-xine
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -512,7 +512,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman kdebase-workspace phonon-xine
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 grep gettext repo-clean kdebase-workspace phonon-xine
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
