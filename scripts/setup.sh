@@ -11,7 +11,7 @@
 # globals
 #
 # version
-VER="0.4.4.57"
+VER="0.4.4.58"
 
 # svn root dir (that contains the packages and _buildscripts dirs)
 SVNBASE="svn://konnektion.ath.cx:1235/packages"
@@ -105,11 +105,6 @@ CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 REPO=`echo $1`
 ARCH=`echo $2`
-if [ "$ARCH" = "x86_64" ] ; then
-   BUILDARCH="x86-64"
-else
-   BUILDARCH="$ARCH"
-fi
 USER_CHECK=`whoami`
 USER=`echo $USER_CHECK`
 USERID=`getent passwd $USER | cut -d: -f3`
@@ -677,7 +672,11 @@ configure_buildscripts()
 		sed -i -e "s,#MAKEFLAGS.*,MAKEFLAGS=\"-j$SETUP_MAKEFLAGS\",g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
 		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/${REPO}/_repo/local\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf 
 		sed -i -e s,#SRCDEST.*,SRCDEST=\"/home/$USER/$BASENAME/${REPO}/_sources\",g $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
-		sed -i -e "s/___ARCH___/$BUILDARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
+		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
+		if [ "$ARCH" = "x86_64" ] ; then
+		    msg "fixing -march for x86_64 architecture"
+		    sed -i -e "s/-march=x86_64/-march=x86-64/g" $BASEPATH/_buildscripts/conf/${REPO}-${ARCH}-makepkg.conf
+		fi
 	status_done
 
 	status_start "setting up repo config"
