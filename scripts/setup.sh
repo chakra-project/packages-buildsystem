@@ -313,7 +313,7 @@ create_pacmanconf() {
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 	
-	fi	elif [ "$REPO" = "apps-unstable" ] ; then
+	elif [ "$REPO" = "apps-unstable" ] ; then
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
@@ -329,6 +329,7 @@ create_pacmanconf() {
 		echo "[apps-unstable]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
+	fi
 
 }
 
