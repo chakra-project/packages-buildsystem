@@ -312,7 +312,24 @@ create_pacmanconf() {
 		echo "[apps-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
-	fi
+	
+	fi	elif [ "$REPO" = "apps-unstable" ] ; then
+		echo "[core-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[platform-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[apps-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[apps-unstable]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+
 }
 
 # 
@@ -499,6 +516,20 @@ create_chroot()
 		newline
 
 	elif [ "$REPO" = "apps-testing" ] ; then
+		msg "installing basic packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/${REPO}-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+	elif [ "$REPO" = "apps-unstable" ] ; then
 		msg "installing basic packages"
 		warning "follow pacman instructions from here"
 
