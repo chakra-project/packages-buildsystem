@@ -327,7 +327,7 @@ create_pacmanconf() {
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[apps-unstable]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/apps-unstable/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 	fi
 
