@@ -62,6 +62,9 @@ load_configs() {
                 elif [ "$_cur_repo" = "apps-testing" ] ; then
                         . "_buildscripts/apps-testing-${_arch}-pkgs.conf"
 
+		elif [ "$_cur_repo" = "apps-unstable" ] ; then
+                        . "_buildscripts/apps-unstable-${_arch}-pkgs.conf"
+
                 else
                         echo "ERROR: no repo specified!!!"
                         exit 1
