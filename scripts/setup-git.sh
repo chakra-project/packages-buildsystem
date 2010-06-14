@@ -24,14 +24,6 @@ PRIMARYCORE="core-testing"
 # the root of everything
 BASENAME="buildroot"
 
-# Use this one if you don't have commit rights 
-#GITBASE="git://gitorious.org/chakra-packages"
-GITBASE="git@gitorious.org:chakra-packages"
-
-# Builsystem is mounted as read only
-BUILD_GITBASE="git://gitorious.org/chakra-packages"
-
-
 #
 # output functions
 #
@@ -111,10 +103,21 @@ CURDIR=`echo $CURDIR_CHECK`
 REPO=`echo $1`
 BRANCH=`echo $2`
 ARCH=`echo $3`
+CMTR=`echo $4`
 USER_CHECK=`whoami`
 USER=`echo $USER_CHECK`
 USERID=`getent passwd $USER | cut -d: -f3`
 PROGRESSBAR="/tmp/chakra-buildscripts.progress"
+
+# Builsystem is mounted as read only
+BUILD_GITBASE="git://gitorious.org/chakra-packages"
+
+# If the user has commits rights the pckgbuilds can be pushed
+if [ "$CMTR" = "c" ] ; then
+	GITBASE="git@gitorious.org:chakra-packages"
+else
+	GITBASE="git://gitorious.org/chakra-packages"
+fi
 
 BASEPATH=`echo $CURDIR/$BASENAME`
 
@@ -633,7 +636,7 @@ create_buildscripts()
 		status_start "fetching buildscripts from GIT"
 		echo " -- you may be asked for your password at Git(orious)."
 		newline
-		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ #&>/dev/null
 		status_done
 	fi
 	
@@ -650,9 +653,9 @@ create_buildscripts()
 	newline
 	cd $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
 	if [ "${BRANCH}" = "master" ] ; then
-		git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+		git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ #&>/dev/null
 	else
-		git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+		git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ #&>/dev/null
 	fi
 	sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su -c "chown -R $USER:users /home/$USER" &>/dev/null
 	status_done
