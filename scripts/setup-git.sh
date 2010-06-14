@@ -2,7 +2,7 @@
 #
 # setup-git.sh based on setup.sh by Jan Mette and Phil Miller
 #
-# (c) 2010.14 - Manuel Tortosa <manutortosa[at]chakra-project[dot]org
+# (c) 2010.06 - Manuel Tortosa <manutortosa[at]chakra-project[dot]org
 # (c) 2010.05 - Phil Miller <philm[at]chakra-project[dot]org
 # (c) 2010.01-2010.04 - Jan Mette
 # GPL 
