@@ -24,9 +24,12 @@ PRIMARYCORE="core-testing"
 # the root of everything
 BASENAME="buildroot"
 
-GITBASE="git@gitorious.org:chakra-packages"
 # Use this one if you don't have commit rights 
 #GITBASE="git://gitorious.org/chakra-packages"
+GITBASE="git@gitorious.org:chakra-packages"
+
+# Builsystem is mounted as read only
+BUILD_GITBASE="git://gitorious.org/chakra-packages"
 
 
 #
@@ -118,7 +121,7 @@ BASEPATH=`echo $CURDIR/$BASENAME`
 # Fixme: This must be done automatically: 
 REPO_CHECK='core platform desktop apps'
 
-GIT_BUILDSYS="$GITBASE/buildsystem.git"
+GIT_BUILDSYS="$BUILD_GITBASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
 if [ "${BRANCH}" = "master" ] ; then
 	REPO_NAME="${REPO}" 
