@@ -735,11 +735,13 @@ configure_buildscripts()
 		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_repo/local\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf 
 		sed -i -e s,#SRCDEST.*,SRCDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_sources\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
 		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
-		if [ "$ARCH" = "x86_64" ] ; then
-		    msg "fixing -march for x86_64 architecture"
-		    sed -i -e "s/-march=x86_64/-march=x86-64/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
-		fi
 	status_done
+
+	# Fix -march for x86_64
+	if [ "$ARCH" = "x86_64" ] ; then
+	    msg "fixing -march for x86_64 architecture"
+	    sed -i -e "s/-march=x86_64/-march=x86-64/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
+	fi
 
 	status_start "setting up repo config"
 		sed -i -e s#_build_work.*#_build_work=\"/home/$USER/$BASENAME/$REPO_NAME/\"#g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-cfg.conf
