@@ -112,7 +112,7 @@ PROGRESSBAR="/tmp/chakra-buildscripts.progress"
 # Builsystem is mounted as read only
 BUILD_GITBASE="git://gitorious.org/chakra-packages"
 
-# If the user has commits rights the pckgbuilds can be pushed
+# If the user has commits rights the pkgbuilds can be pushed
 if [ "$CMTR" = "c" ] ; then
 	GITBASE="git@gitorious.org:chakra-packages"
 else
@@ -140,8 +140,8 @@ rm -rf $BASEPATH/pacman.conf
 #
 # "detect" distro
 #
-if [ -e "/etc/chakra_version" ] ; then
-	CHAK_VER=`cat /etc/chakra_version`
+if [ -e "/etc/chakra-release" ] ; then
+	CHAK_VER=`cat /etc/chakra-release`
 	echo ":: running on Chakra/GNU linux $CHAK_VER"
 	unset CHAK_VER
 	DISTRO="chakra"
