@@ -629,7 +629,15 @@ create_buildscripts()
 	status_done
 	
 	if [ -d "$BASEPATH/_buildscripts" ] ; then
-		notice "buildscripts already installed"
+		if [ -d "$BASEPATH/_buildscripts/.svn" ] ; then
+			sudo rm -rf -v $BASEPATH/_buildscripts &>/dev/null
+			status_start "fetching buildscripts from GIT"
+			newline
+			git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+			status_done
+		else
+			notice "buildscripts already installed"
+		fi
 	else
 		status_start "fetching buildscripts from GIT"
 		newline
