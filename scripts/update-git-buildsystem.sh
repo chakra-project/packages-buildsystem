@@ -34,7 +34,6 @@ status_done() {
 
 msg "updating _buildscripts"
 	pushd $CURDIR/_buildscripts &>/dev/null
-	echo " -- you may be asked for your Git(orius) password."
 	git pull
 	popd &>/dev/null
 	
