@@ -699,7 +699,7 @@ preconfigure_buildscripts()
 
 	status_start "installing chroot scripts"
 		cp $BASEPATH/_buildscripts/scripts/enter-chroot.sh $BASEPATH &>/dev/null
-		cp $BASEPATH/_buildscripts/scripts/update-buildsystem.sh $BASEPATH &>/dev/null
+		cp $BASEPATH/_buildscripts/scripts/update-git-buildsystem.sh $BASEPATH &>/dev/null
 		cp $BASEPATH/_buildscripts/scripts/update-chroot.sh $BASEPATH &>/dev/null
 		chmod +x $BASEPATH/*.sh &>/dev/null
 	status_done
