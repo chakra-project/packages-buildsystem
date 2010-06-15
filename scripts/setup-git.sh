@@ -633,7 +633,7 @@ create_buildscripts()
 	else
 		status_start "fetching buildscripts from GIT"
 		newline
-		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ #&>/dev/null
+		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
 		status_done
 	fi
 	
@@ -657,6 +657,7 @@ create_buildscripts()
 		git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ #&>/dev/null
 	fi
 	sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su -c "chown -R $USER:users /home/$USER" &>/dev/null
+        newline
 	status_done
 }
 
@@ -778,11 +779,11 @@ all_done()
 		msg "please configure your git crendentials inside the chroot:"
 		msg "git config --global user.name "Your name""
 		msg "git config --global user.email "Your email address""
-		newline
-		msg "and finally, copy you ssh key inside:"
+		msg "and then, copy your ssh key inside:"
                 msg "$BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/.ssh"
 	fi
-	msg "Now open$_W _buildscripts/$REPO_NAME-${ARCH}-makepkg.conf and edit the"
+        newline
+	msg "Finally open$_W _buildscripts/$REPO_NAME-${ARCH}-makepkg.conf and edit the"
 	msg "DLAGENTS, CFLAGS, CXXFLAGS and PACKAGER settings to your"
 	msg "liking and you are ready to build packages :)"
 	newline
