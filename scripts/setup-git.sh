@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.59"
+VER="0.4.4.60"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://konnektion.ath.cx/repo"
@@ -110,9 +110,9 @@ USERID=`getent passwd $USER | cut -d: -f3`
 PROGRESSBAR="/tmp/chakra-buildscripts.progress"
 
 # Builsystem is mounted as read only
-BUILD_GITBASE="git://gitorious.org/chakra-packages"
+BUILDSYS_BASE="git://gitorious.org/chakra-packages"
 
-# If the user has commits rights the pkgbuilds can be pushed
+# Enable (c)ommiter mode
 if [ "$CMTR" = "c" ] ; then
 	GITBASE="git@gitorious.org:chakra-packages"
 else
@@ -121,10 +121,10 @@ fi
 
 BASEPATH=`echo $CURDIR/$BASENAME`
 
-# Fixme: This must be done automatically: 
+# List of GIT repos
 REPO_CHECK='core platform desktop apps'
 
-GIT_BUILDSYS="$BUILD_GITBASE/buildsystem.git"
+GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
 if [ "${BRANCH}" = "master" ] ; then
 	REPO_NAME="${REPO}" 
@@ -175,7 +175,6 @@ else
 	echo ":: can not proceed, stopping... "
 	exit 0
 fi
-
 
 
 #
@@ -363,7 +362,6 @@ create_pacmanconf
 echo ":: loading package information"
 COREPKGS=`sudo LC_ALL=C $PACMAN_BIN --config $BASEPATH/pacman.conf --cachedir $BASEPATH/_cache -Syl $PRIMARYCORE | cut -d " " -f 2 | grep -e "Synchronizing" -e "core-testing" -v | grep -e ".db.tar." -e "platform-testing" -v`
 
-
 #
 # main functions
 #
@@ -501,7 +499,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -517,7 +515,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -532,7 +530,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -547,7 +545,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -561,7 +559,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -634,7 +632,6 @@ create_buildscripts()
 		notice "buildscripts already installed"
 	else
 		status_start "fetching buildscripts from GIT"
-		echo " -- you may be asked for your password at Git(orious)."
 		newline
 		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ #&>/dev/null
 		status_done
@@ -649,7 +646,9 @@ create_buildscripts()
 	fi
 
 	status_start "fetching PKGBUILDs from GIT"
-	echo " -- you may be asked for your password at Git(orious)."
+	if [ "$CMTR" = "c" ] ; then
+	echo " -- (c)ommiter mode enabled."
+	fi
 	newline
 	cd $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
 	if [ "${BRANCH}" = "master" ] ; then
@@ -774,6 +773,15 @@ all_done()
 {
 	newline
 	title "All done!"
+	if [ "$CMTR" = "c" ] ; then
+		msg "You enabled the (c)ommiter mode, you must perform some more steps..."
+		msg "please configure your git crendentials inside the chroot:"
+		msg "git config --global user.name "Your name""
+		msg "git config --global user.email "Your email address""
+		newline
+		msg "and finally, copy you ssh key inside:"
+                msg "$BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/.ssh"
+	fi
 	msg "Now open$_W _buildscripts/$REPO_NAME-${ARCH}-makepkg.conf and edit the"
 	msg "DLAGENTS, CFLAGS, CXXFLAGS and PACKAGER settings to your"
 	msg "liking and you are ready to build packages :)"
