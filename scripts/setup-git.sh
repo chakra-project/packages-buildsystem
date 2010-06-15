@@ -779,8 +779,8 @@ all_done()
 	if [ "$CMTR" = "c" ] ; then
 		msg "You enabled the (c)ommiter mode, you must perform some more steps..."
 		msg "please configure your git crendentials inside the chroot:"
-		msg "git config --global user.name "Your name""
-		msg "git config --global user.email "Your email address""
+		msg "git config --global user.name \"Your name\""
+		msg "git config --global user.email \"Your email address\""
 		msg "and then, copy your ssh key inside:"
                 msg "$BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/.ssh"
 	fi
