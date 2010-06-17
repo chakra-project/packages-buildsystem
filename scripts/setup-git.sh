@@ -842,7 +842,7 @@ if [ -z "${BRANCH}" ] ; then
 	newline
 	exit 1
 fi
-if [ "${BRANCH}" != "master" ] && [ "${BRANCH}" != "testing" ] && [ "${REPO}" != "unstable" ] ; then
+if [ "${BRANCH}" != "master" ] && [ "${BRANCH}" != "testing" ] && [ "${BRANCH}" != "unstable" ] ; then
 	error "The branch ${BRANCH} does not exist!"
 	warning "possible branches:\nmaster\ntesting\nunstable"
 	newline
