@@ -122,7 +122,7 @@ fi
 BASEPATH=`echo $CURDIR/$BASENAME`
 
 # List of GIT repos
-REPO_CHECK='core platform desktop apps'
+REPO_CHECK='core\nplatform\ndesktop\napps'
 
 GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
