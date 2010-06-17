@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.60"
+VER="0.4.4.61"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://konnektion.ath.cx/repo"
@@ -821,23 +821,47 @@ else
 	error "Do not run me on your root account, thanks ;)"
 	exit 1
 fi
+
+
 # check the repo parameter
 if [ -z "${REPO}" ] ; then
 	warning "you need to specify a repository:\n$REPO_CHECK"
 	newline
 	exit 1
 fi
+if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] ; then
+	error "the repositori ${REPO} does not exist!"
+	warning "available repos:\n$REPO_CHECK"
+	newline
+	exit 1
+fi
+
+#Check the branch parameter
 if [ -z "${BRANCH}" ] ; then
 	warning "you need to specify a branch:\nmaster\ntesting\nunstable"
 	newline
 	exit 1
 fi
+if [ "${BRANCH}" != "master" ] && [ "${BRANCH}" != "testing" ] && [ "${REPO}" != "unstable" ] ; then
+	error "The branch ${BRANCH} does not exist!"
+	warning "possible branches:\nmaster\ntesting\nunstable"
+	newline
+	exit 1
+fi
+
 # check the parameter
 if [ -z "${ARCH}" ] ; then
 	warning "you need to specify an architecture:\ni686\nx86_64"
 	newline
 	exit 1
 fi
+if [ "${ARCH}" != "i686" ] && [ "${ARCH}" != "x86_64" ] ; then
+	error "unknown architecture ${ARCH}!"
+	warning "possible architectures:\ni686\nx86_64"
+	newline
+	exit 1
+fi
+
 # initialize sudo, so we dont interrupt the setup in the middle of the run. cheap, but should work (tm)
 if [ -e "/usr/bin/sudo" ] ; then
 	newline
