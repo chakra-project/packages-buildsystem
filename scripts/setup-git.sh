@@ -882,6 +882,12 @@ newline
 warning "Installation directory: $BASEPATH/$REPO_NAME-${ARCH}"
 notice "                        (^^the root dir of the currently selected repository^^)"
 newline
+if [ "$CMTR" = "c" ] ; then
+	warning "(c)ommiter mode enabled"
+else
+	warning "(c)ommiter mode disabled"
+fi
+newline
 question "Do you want to continue (y/n) "
 
 while true; do
