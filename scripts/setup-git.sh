@@ -122,7 +122,7 @@ fi
 BASEPATH=`echo $CURDIR/$BASENAME`
 
 # List of GIT repos
-REPO_CHECK='core platform desktop apps'
+REPO_CHECK='core\nplatform\ndesktop\napps'
 
 GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
@@ -831,14 +831,33 @@ if [ -z "${REPO}" ] ; then
 	newline
 	exit 1
 fi
+if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] ; then
+	error "the repository ${REPO} does not exist!"
+	warning "available repos:\n$REPO_CHECK"
+	newline
+	exit 1
+fi
+#Check the branch parameter
 if [ -z "${BRANCH}" ] ; then
 	warning "you need to specify a branch:\nmaster\ntesting\nunstable"
+	newline
+	exit 1
+fi
+if [ "${BRANCH}" != "master" ] && [ "${BRANCH}" != "testing" ] && [ "${BRANCH}" != "unstable" ] ; then
+	error "The branch ${BRANCH} does not exist!"
+	warning "possible branches:\nmaster\ntesting\nunstable"
 	newline
 	exit 1
 fi
 # check the parameter
 if [ -z "${ARCH}" ] ; then
 	warning "you need to specify an architecture:\ni686\nx86_64"
+	newline
+	exit 1
+fi
+if [ "${ARCH}" != "i686" ] && [ "${ARCH}" != "x86_64" ] ; then
+	error "unknown architecture ${ARCH}!"
+	warning "possible architectures:\ni686\nx86_64"
 	newline
 	exit 1
 fi
