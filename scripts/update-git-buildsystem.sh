@@ -7,7 +7,7 @@ CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 BASENAME="Chakra"
 BASEPATH=`echo $CURDIR`
-REPOS=`ls -1 $BASEPATH | grep -e sh -e _ -e pkgbuild -e packages  -v | sed 's/\///g'`
+REPOS=`ls -1 $BASEPATH | grep -e 86 | sed 's/\///g'`
 
 newline() {
 	echo " "
@@ -47,7 +47,7 @@ msg "updating makepkg"
 	for repo in $REPOS
 	do
 		if [ "$repo" = "desktop-i686" ] || [ "$repo" = "desktop-testing-i686" ] || [ "$repo" = "desktop-x86_64" ] || [ "$repo" = "desktop-testing-x86_64" ]; then
-		cp -f $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g'`/makepkg
+		cp -f $CURDIR/_buildscripts/makepkg-chakra $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed "s/-i686//g" | sed "s/-x86_64//g"`/makepkg
 	else
 		cp -f $CURDIR/_buildscripts/makepkg $CURDIR/$repo/chroot/home/$USER/buildroot/`echo $repo | sed 's/-i686//g' | sed 's/-x86_64//g'`/makepkg
 	fi
