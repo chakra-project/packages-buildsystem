@@ -685,15 +685,15 @@ preconfigure_buildscripts()
 	
 	status_start "installing makepkg"
 	if [ "$REPO_NAME" = "desktop" ] || [ "$REPO_NAME" = "desktop-testing" ]; then
-		cp $BASEPATH/_buildscripts/makepkg-chakra $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/makepkg &>/dev/null
+		cp -f $BASEPATH/_buildscripts/makepkg-chakra $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/makepkg &>/dev/null
 	else
-		cp $BASEPATH/_buildscripts/makepkg $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/makepkg &>/dev/null
+		cp -f $BASEPATH/_buildscripts/makepkg $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/makepkg &>/dev/null
 	fi
 
 	status_done
 
 	status_start "installing .gitignore"
-	cp $BASEPATH/_buildscripts/.gitignore $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/.gitignore &>/dev/null
+		cp -f $BASEPATH/_buildscripts/.gitignore $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/.gitignore &>/dev/null
 	status_done
 
 	status_start "installing chroot configs"
