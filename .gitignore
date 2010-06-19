@@ -30,3 +30,6 @@ sync-up.sh
 *-pkgs.conf
 user.conf
 
+*.db.tar.*
+*.pkg.tar.*
+
