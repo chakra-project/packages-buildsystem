@@ -29,7 +29,6 @@ for repo in $REPOS
 	msg "updating chroot: $repo"
 	newline
 	echo ":: creating pacman.conf"
-	create_pacmanconf
 	sudo pacman -r $BASEPATH/$repo/chroot --config $BASEPATH/$repo/chroot/etc/pacman.conf --cachedir $BASEPATH/_cache -Suy --noconfirm
 	newline
 	done
