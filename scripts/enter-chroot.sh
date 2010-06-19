@@ -47,28 +47,42 @@ if [ -d $BASEPATH/$REPO ] ; then
 	sudo cp -vf /etc/mtab $CURDIR/$REPO/chroot/etc/mtab &>/dev/null
 	sudo cp -vf /etc/resolv.conf $CURDIR/$REPO/chroot/etc/resolv.conf &>/dev/null
 
+        if [ ! -f $CURDIR/.chroot ]; then
+                echo 1 > $CURDIR/.chroot
+        else
+                MOUNTCOUNT=$(<$CURDIR/.chroot)
+                ((MOUNTCOUNT++))
+                echo $MOUNTCOUNT > $CURDIR/.chroot
+        fi
+
 	sudo chroot $CURDIR/$REPO/chroot su - $USER
 
-	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
-	
-	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
-	
-	sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
-	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+	MOUNTCOUNT=$(<$CURDIR/.chroot)
+	((MOUNTCOUNT--))
+	echo $MOUNTCOUNT > $CURDIR/.chroot
+
+	if [ "$(cat $CURDIR/.chroot)" -eq "0" ]; then
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+		
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+		
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+	fi
 else
 	newline
         error "the repository $REPO does not exist!"
