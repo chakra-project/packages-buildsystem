@@ -5,7 +5,7 @@ USER=`echo $USER_CHECK`
 CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 BASEPATH=`echo $CURDIR`
-REPOS=`ls -1 $BASEPATH | grep -v -e sh -e _ -e pkgbuild -e packages | sed 's/\///g'`
+REPOS=`ls -1 $BASEPATH | grep -e 86 | sed 's/\///g'`
 
 newline() {
 	echo " "
@@ -31,7 +31,7 @@ for repo in $REPOS
 	do
 	msg "updating chroot: $repo"
 	newline
-		sudo pacman -r $CURDIR/$repo/chroot --cachedir $CURDIR/_cache -Suy --noconfirm
+		sudo pacman -r $BASEPATH/$repo/chroot --cachedir $BASEPATH/_cache -Suy --noconfirm
 	done
 	
 	newline
