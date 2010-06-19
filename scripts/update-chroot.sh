@@ -21,9 +21,6 @@ msg() {
 	printf "\033[1;32m ::\033[1;0m\033[1;0m ${mesg}\033[1;0m\n"
 }
 
-
-
-
 #
 # main functions
 #
@@ -31,12 +28,14 @@ for repo in $REPOS
 	do
 	msg "updating chroot: $repo"
 	newline
-		sudo pacman -r $BASEPATH/$repo/chroot --cachedir $BASEPATH/_cache -Suy --noconfirm
+	echo ":: creating pacman.conf"
+	create_pacmanconf
+	sudo pacman -r $BASEPATH/$repo/chroot --config $BASEPATH/$repo/chroot/etc/pacman.conf --cachedir $BASEPATH/_cache -Suy --noconfirm
+	newline
 	done
 	
-	newline
-	msg "all done!"
-	newline
+msg "all done!"
+newline
 
 
 
