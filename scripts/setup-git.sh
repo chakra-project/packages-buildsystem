@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.61"
+VER="0.4.4.62"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://konnektion.ath.cx/repo"
@@ -620,28 +620,24 @@ create_buildscripts()
 	title "Installing buildscripts"
 
 	status_start "creating needed directories"
-		for repo in ${REPOS}
-		do
-			sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su $USER -c "mkdir -p /home/$USER/$BASENAME/$REPO_NAME" &>/dev/null
-			
-			sudo chown -R $USER:users $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER
-		done
+		sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su $USER -c "mkdir -p /home/$USER/$BASENAME/$REPO_NAME" &>/dev/null
+		sudo chown -R $USER:users $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER
 	status_done
 	
 	if [ -d "$BASEPATH/_buildscripts" ] ; then
 		if [ -d "$BASEPATH/_buildscripts/.svn" ] ; then
 			sudo rm -rf -v $BASEPATH/_buildscripts &>/dev/null
 			status_start "fetching buildscripts from GIT"
-			newline
-			git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+				newline
+				git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
 			status_done
 		else
 			notice "buildscripts already installed"
 		fi
 	else
 		status_start "fetching buildscripts from GIT"
-		newline
-		git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+			newline
+			git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
 		status_done
 	fi
 	
@@ -649,23 +645,23 @@ create_buildscripts()
 		notice "sources dir exists already"
 	else
 		status_start "creating sources dir"
-		mkdir -p $BASEPATH/_sources &>/dev/null
+			mkdir -p $BASEPATH/_sources &>/dev/null
 		status_done
 	fi
 
 	status_start "fetching PKGBUILDs from GIT"
-	if [ "$CMTR" = "c" ] ; then
-	echo " -- (c)ommiter mode enabled."
-	fi
-	newline
-	cd $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
-	if [ "${BRANCH}" = "master" ] ; then
-		git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ #&>/dev/null
-	else
-		git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ #&>/dev/null
-	fi
-	sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su -c "chown -R $USER:users /home/$USER" &>/dev/null
-        newline
+		if [ "$CMTR" = "c" ] ; then
+			echo " -- (c)ommiter mode enabled."
+		fi
+		newline
+		cd $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+		if [ "${BRANCH}" = "master" ] ; then
+			git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+		else
+			git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+		fi
+		sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su -c "chown -R $USER:users /home/$USER" &>/dev/null
+		newline
 	status_done
 }
 
