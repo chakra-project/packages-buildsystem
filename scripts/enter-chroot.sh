@@ -8,7 +8,7 @@ CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
 BASENAME="Chakra"
 BASEPATH=`echo $CURDIR`
-REPOS=`ls -1 $BASEPATH | grep -e sh -e _ -e pkgbuild -e packages -v | sed 's/\///g'`
+REPOS=`ls -1 $BASEPATH | grep -e 86 | sed 's/\///g'`
 
 newline() {
 	echo " "
@@ -26,15 +26,15 @@ msg() {
 
 if [ -z "$REPO" ] ; then
 	newline
-	error "you need to specify a repository:\n$REPOS"
+	error "you need to specify a repository:\n\n$REPOS"
 	newline
 	exit 1
 fi
 
-
-#
-# main functions
-#
+if [ -d $BASEPATH/$REPO ] ; then
+	#
+	# main functions
+	#
 	msg "entering chroot: $REPO"
 	newline
 
@@ -69,3 +69,11 @@ fi
 	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
 	sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+else
+	newline
+        error "the repository $REPO does not exist!"
+	error "available repos:\n\n$REPOS"
+	newline
+	exit 1
+fi	
+
