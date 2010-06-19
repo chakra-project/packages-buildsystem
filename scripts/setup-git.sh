@@ -122,7 +122,7 @@ fi
 BASEPATH=`echo $CURDIR/$BASENAME`
 
 # List of GIT repos
-REPO_CHECK='core\nplatform\ndesktop\napps'
+REPO_CHECK='core platform desktop apps'
 
 GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
@@ -692,6 +692,10 @@ preconfigure_buildscripts()
 
 	status_done
 
+	status_start "installing .gitignore"
+	cp $BASEPATH/_buildscripts/.gitignore $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/.gitignore &>/dev/null
+	status_done
+
 	status_start "installing chroot configs"
 		cp -f $BASEPATH/_buildscripts/skel/bashrc $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/.bashrc
 		cp -f $BASEPATH/_buildscripts/skel/screenrc $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/.screenrc
@@ -821,47 +825,23 @@ else
 	error "Do not run me on your root account, thanks ;)"
 	exit 1
 fi
-
-
 # check the repo parameter
 if [ -z "${REPO}" ] ; then
 	warning "you need to specify a repository:\n$REPO_CHECK"
 	newline
 	exit 1
 fi
-if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] ; then
-	error "the repositori ${REPO} does not exist!"
-	warning "available repos:\n$REPO_CHECK"
-	newline
-	exit 1
-fi
-
-#Check the branch parameter
 if [ -z "${BRANCH}" ] ; then
 	warning "you need to specify a branch:\nmaster\ntesting\nunstable"
 	newline
 	exit 1
 fi
-if [ "${BRANCH}" != "master" ] && [ "${BRANCH}" != "testing" ] && [ "${BRANCH}" != "unstable" ] ; then
-	error "The branch ${BRANCH} does not exist!"
-	warning "possible branches:\nmaster\ntesting\nunstable"
-	newline
-	exit 1
-fi
-
 # check the parameter
 if [ -z "${ARCH}" ] ; then
 	warning "you need to specify an architecture:\ni686\nx86_64"
 	newline
 	exit 1
 fi
-if [ "${ARCH}" != "i686" ] && [ "${ARCH}" != "x86_64" ] ; then
-	error "unknown architecture ${ARCH}!"
-	warning "possible architectures:\ni686\nx86_64"
-	newline
-	exit 1
-fi
-
 # initialize sudo, so we dont interrupt the setup in the middle of the run. cheap, but should work (tm)
 if [ -e "/usr/bin/sudo" ] ; then
 	newline
