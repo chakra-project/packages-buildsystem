@@ -6,7 +6,6 @@ USER_CHECK=`whoami`
 USER=`echo $USER_CHECK`
 CURDIR_CHECK=`pwd`
 CURDIR=`echo $CURDIR_CHECK`
-BASENAME="Chakra"
 BASEPATH=`echo $CURDIR`
 REPOS=`ls -1 $BASEPATH | grep -e 86 | sed 's/\///g'`
 
