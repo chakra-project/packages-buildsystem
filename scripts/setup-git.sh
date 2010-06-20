@@ -16,7 +16,7 @@
 VER="0.4.4.62"
 
 # packages root dir (that contains the different repos)
-PKGSOURCE="http://konnektion.ath.cx/repo"
+PKGSOURCE="http://chakra-project.org/repo/newbase"
 
 # the primary repo packages branch, either core or core-testing
 PRIMARYCORE="core-testing"
