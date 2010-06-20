@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.62"
+VER="0.4.4.63"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -656,9 +656,9 @@ create_buildscripts()
 		newline
 		cd $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
 		if [ "${BRANCH}" = "master" ] ; then
-			git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+			git clone $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ 
 		else
-			git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/ &>/dev/null
+			git clone -b ${BRANCH} $GIT_REPO $BASEPATH/$REPO_NAME-${ARCH}/chroot/home/$USER/$BASENAME/$REPO_NAME/
 		fi
 		sudo chroot $BASEPATH/$REPO_NAME-${ARCH}/chroot su -c "chown -R $USER:users /home/$USER" &>/dev/null
 		newline
@@ -747,8 +747,8 @@ configure_buildscripts()
 
 	# Fix -march for x86_64
 	if [ "$ARCH" = "x86_64" ] ; then
-	    msg "fixing -march for x86_64 architecture"
-	    sed -i -e "s/-march=x86_64/-march=x86-64/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
+		notice "fixing -march for x86_64 architecture"
+		sed -i -e "s/-march=x86_64/-march=x86-64/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
 	fi
 
 	status_start "setting up repo config"
