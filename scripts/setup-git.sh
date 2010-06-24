@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.63"
+VER="0.4.4.64"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -629,7 +629,7 @@ create_buildscripts()
 			sudo rm -rf -v $BASEPATH/_buildscripts &>/dev/null
 			status_start "fetching buildscripts from GIT"
 				newline
-				git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+				git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/
 			status_done
 		else
 			notice "buildscripts already installed"
@@ -637,7 +637,7 @@ create_buildscripts()
 	else
 		status_start "fetching buildscripts from GIT"
 			newline
-			git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/ &>/dev/null
+			git clone $GIT_BUILDSYS $BASEPATH/_buildscripts/
 		status_done
 	fi
 	
