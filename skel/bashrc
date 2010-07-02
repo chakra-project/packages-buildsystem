@@ -72,4 +72,8 @@ export VISUAL=vim
 alias vi=vim
 
 alias ls='ls --color=auto'
+alias c='clear'
+alias e='exit'
+alias :m='../makepkg -ci'
+alias :cp='rm pkg src dbg hdr -r'
 PS1="\[\e[31;1m\]\u@[chroot]:\w$ \[\e[0m\]"
