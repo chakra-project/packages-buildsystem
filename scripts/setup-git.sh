@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.01"
+VER="0.4.5.02"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -114,19 +114,23 @@ BUILDSYS_BASE="git://gitorious.org/chakra-packages"
 
 # Enable (c)ommiter mode
 if [ "$CMTR" = "c" ] ; then
-	GITBASE="git@gitorious.org:chakra-packages"
+	# Temporal fix for the bundle repo
+	# must be reomved when we've this repo in the same Git(orious) as packages
+	if [ "$REPO" = "bundles" ] ; then
+		GITBASE="git@gitorious.org:chakra-bundles"
+	else
+		GITBASE="git@gitorious.org:chakra-packages"
+	fi
 else
-	GITBASE="git://gitorious.org/chakra-packages"
+	if [ "$REPO" = "bundles" ] ; then
+		GITBASE="git://gitorious.org/chakra-bundles"
+	else
+		GITBASE="git://gitorious.org/chakra-packages"
+	fi
 fi
 
 # Temporal fix for the bundle repo
 # must be reomved when we've this repo in the same Git(orious) as packages
-if [ "$CMTR" = "c" ] && [ "$REPO" = "bundles" ] ; then
-	GITBASE="git@gitorious.org:chakra-bundles"
-else
-	GITBASE="git://gitorious.org/chakra-bundles"
-fi
-
 
 BASEPATH=`echo $CURDIR/$BASENAME`
 
