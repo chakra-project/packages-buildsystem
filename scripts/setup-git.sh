@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.4.64"
+VER="0.4.5.00"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -119,10 +119,19 @@ else
 	GITBASE="git://gitorious.org/chakra-packages"
 fi
 
+# Temporal fix for the bundle repo
+# must be reomved when we've this repo in the same Git(orious) as packages
+if [ "$CMTR" = "c" ] && [ "$REPO" = "bundles" ] ; then
+	GITBASE="git@gitorious.org:chakra-bundles"
+else
+	GITBASE="git://gitorious.org/chakra-bundles"
+fi
+
+
 BASEPATH=`echo $CURDIR/$BASENAME`
 
 # List of GIT repos
-REPO_CHECK='core\nplatform\ndesktop\napps'
+REPO_CHECK='core\nplatform\ndesktop\napps\nbundles'
 
 GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
@@ -350,6 +359,34 @@ create_pacmanconf() {
 		echo "[apps-unstable]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-unstable/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
+
+	elif [ "$REPO_NAME" = "bundles" ] ; then
+		echo "[core]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[platform]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[desktop]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[apps]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/apps/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+
+	elif [ "$REPO_NAME" = "bundles-testing" ] ; then
+		echo "[core-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[platform-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[apps-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 	fi
 
 }
@@ -560,6 +597,37 @@ create_chroot()
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+	elif [ "$REPO_NAME" = "bundles" ] ; then
+
+		msg "installing basic packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+	elif [ "$REPO_NAME" = "bundles-testing" ] ; then
+
+		msg "installing basic packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -827,7 +895,7 @@ if [ -z "${REPO}" ] ; then
 	newline
 	exit 1
 fi
-if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] ; then
+if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] && [ "${REPO}" != "bundles" ] ; then
 	error "the repository ${REPO} does not exist!"
 	warning "available repos:\n$REPO_CHECK"
 	newline
