@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.00"
+VER="0.4.5.01"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -611,7 +611,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt cinstall
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
@@ -627,7 +627,7 @@ create_chroot()
 		newline
 
 		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
-		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt cinstall
 
 		# update sudo timestamp to prevent further password questions
 		sudo -v
