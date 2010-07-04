@@ -65,6 +65,12 @@ load_configs() {
 		elif [ "$_cur_repo" = "apps-unstable" ] ; then
                         . "_buildscripts/apps-unstable-${_arch}-pkgs.conf"
 
+                elif [ "$_cur_repo" = "bundles" ] ; then
+                        . "_buildscripts/bundles-${_arch}-pkgs.conf"
+
+		elif [ "$_cur_repo" = "bundles-testing" ] ; then
+                        . "_buildscripts/bundles-testing-${_arch}-pkgs.conf"
+
                 else
                         echo "ERROR: no repo specified!!!"
                         exit 1
