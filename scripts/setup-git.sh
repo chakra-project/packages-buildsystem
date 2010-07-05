@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.02"
+VER="0.4.5.03"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -812,7 +812,11 @@ configure_buildscripts()
 
 	status_start "setting up makepkg config"
 		sed -i -e "s,#MAKEFLAGS.*,MAKEFLAGS=\"-j$SETUP_MAKEFLAGS\",g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
-		sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_repo/local\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf 
+		if [ "${REPO}" = "bundles" ] ; then
+			 sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_temp\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf 
+		else
+			 sed -i -e s,#PKGDEST.*,PKGDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_repo/local\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf 
+		fi
 		sed -i -e s,#SRCDEST.*,SRCDEST=\"/home/$USER/$BASENAME/$REPO_NAME/_sources\",g $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
 		sed -i -e "s/___ARCH___/$ARCH/g" $BASEPATH/_buildscripts/conf/$REPO_NAME-${ARCH}-makepkg.conf
 	status_done
