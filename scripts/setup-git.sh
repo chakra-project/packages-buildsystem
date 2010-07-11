@@ -283,7 +283,7 @@ create_pacmanconf() {
 
 	elif [ "$REPO_NAME" = "platform" ] ; then
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
@@ -321,10 +321,10 @@ create_pacmanconf() {
 
 	elif [ "$REPO_NAME" = "apps" ] ; then
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[desktop]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/desktop/${ARCH}" >> $BASEPATH/pacman.conf
@@ -366,10 +366,10 @@ create_pacmanconf() {
 
 	elif [ "$REPO_NAME" = "bundles" ] ; then
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[desktop]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/desktop/${ARCH}" >> $BASEPATH/pacman.conf
