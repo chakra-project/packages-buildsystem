@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.05"
+VER="0.4.5.06"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -309,14 +309,14 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "desktop-testing" ] ; then
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		echo " " >> $BASEPATH/pacman.conf
-		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "apps" ] ; then
@@ -334,28 +334,28 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "apps-testing" ] ; then
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		echo " " >> $BASEPATH/pacman.conf
-		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[apps-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 	
 	elif [ "$REPO_NAME" = "apps-unstable" ] ; then
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		echo " " >> $BASEPATH/pacman.conf
-		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[apps-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
@@ -379,14 +379,14 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "bundles-testing" ] ; then
+		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
 		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
-		echo " " >> $BASEPATH/pacman.conf
-		echo "[desktop-testing]" >> $BASEPATH/pacman.conf
-		echo "Server=$PKGSOURCE/desktop-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[apps-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
