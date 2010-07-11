@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.04"
+VER="0.4.5.05"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -320,10 +320,10 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "apps" ] ; then
-		echo "[core]" >> $BASEPATH/pacman.conf
+		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
-		echo "[platform]" >> $BASEPATH/pacman.conf
+		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[desktop]" >> $BASEPATH/pacman.conf
@@ -365,10 +365,10 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 
 	elif [ "$REPO_NAME" = "bundles" ] ; then
-		echo "[core]" >> $BASEPATH/pacman.conf
+		echo "[core-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/core/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
-		echo "[platform]" >> $BASEPATH/pacman.conf
+		echo "[platform-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/platform/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[desktop]" >> $BASEPATH/pacman.conf
@@ -591,7 +591,20 @@ create_chroot()
 		# update sudo timestamp to prevent further password questions
 		sudo -v
 		newline
+	elif [ "$REPO_NAME" = "apps" ] ; then
+		msg "installing basic packages"
+		warning "follow pacman instructions from here"
 
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean kde-support kdebase-workspace phonon-xine
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
 	elif [ "$REPO_NAME" = "apps-testing" ] ; then
 		msg "installing basic packages"
 		warning "follow pacman instructions from here"
