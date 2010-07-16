@@ -47,44 +47,39 @@ if [ -d $BASEPATH/$REPO ] ; then
 	sudo cp -vf /etc/resolv.conf $CURDIR/$REPO/chroot/etc/resolv.conf &>/dev/null
 
         if [ ! -f $CURDIR/.chroot ]; then
-                echo 1 > $CURDIR/.chroot
+		touch $CURDIR/.chroot
         else
-                MOUNTCOUNT=$(<$CURDIR/.chroot)
-                ((MOUNTCOUNT++))
-                echo $MOUNTCOUNT > $CURDIR/.chroot
+		echo "ERROR: Chakra chroot already mounted @ /dev /sys /proc"
+		exit
         fi
 
 	sudo chroot $CURDIR/$REPO/chroot su - $USER
 
-	MOUNTCOUNT=$(<$CURDIR/.chroot)
-	((MOUNTCOUNT--))
-	echo $MOUNTCOUNT > $CURDIR/.chroot
+	rm $CURDIR/.chroot
 
-	if [ "$(cat $CURDIR/.chroot)" -eq "0" ]; then
-		for REPOn in $REPOS; do
-			REPOREALn=`echo $REPOn | sed "s/-i686//g" | sed "s/-x86_64//g"`
-			sudo umount $CURDIR/$REPOn/chroot/dev/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/sys/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/proc/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_buildscripts &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_sources &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/var/cache/pacman/pkg &>/dev/null
-			
-			sudo umount $CURDIR/$REPOn/chroot/dev/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/sys/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/proc/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_buildscripts &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_sources &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/var/cache/pacman/pkg &>/dev/null
-			
-			sudo umount $CURDIR/$REPOn/chroot/dev/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/sys/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/proc/ &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_buildscripts &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/home/$USER/buildroot/$REPOREALn/_sources &>/dev/null
-			sudo umount $CURDIR/$REPOn/chroot/var/cache/pacman/pkg &>/dev/null;
-		done
-	fi
+	for REPO in $REPOS; do
+		REPOREAL=`echo $REPO | sed "s/-i686//g" | sed "s/-x86_64//g"`
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+		
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null
+		
+		sudo umount $CURDIR/$REPO/chroot/dev/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/sys/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/proc/ &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_buildscripts &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/home/$USER/buildroot/$REPOREAL/_sources &>/dev/null
+		sudo umount $CURDIR/$REPO/chroot/var/cache/pacman/pkg &>/dev/null;
+	done
 else
 	newline
         error "the repository $REPO does not exist!"
