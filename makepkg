@@ -1620,10 +1620,11 @@ else
 	exit 1 # $E_CONFIG_ERROR
 fi
 
+# (we dont need that)
 # Source user-specific makepkg.conf overrides
-if [[ -r ~/.makepkg.conf ]]; then
-	source ~/.makepkg.conf
-fi
+#if [[ -r ~/.makepkg.conf ]]; then
+#	source ~/.makepkg.conf
+#fi
 
 # set pacman command if not already defined
 PACMAN=${PACMAN:-pacman}
@@ -1672,7 +1673,7 @@ if (( CLEANCACHE )); then
 	if [[ -n $SRCDEST && $SRCDEST != $startdir ]]; then
 		msg "$(gettext "Cleaning up ALL files from %s.")" "$SRCDEST"
 		echo -n "$(gettext "    Are you sure you wish to do this? ")"
-		echo -n "$(gettext "[y/N]")"
+		echo -n "$(gettext "[Y/n]")"
 		read answer
 		answer="${answer^^}"
 		if [[ $answer = $(gettext YES) || $answer = $(gettext Y) ]]; then
