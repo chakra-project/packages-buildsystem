@@ -2288,7 +2288,7 @@ if (( INFAKEROOT )); then
 			fi
 	else
 		for pkg in ${pkgname[@]}; do
-			pkgdir="$pkgdir/$pkg"
+			pkgdir="$pkgdir/pkg_$pkg"
 			mkdir -p "$pkgdir"
 			dbgdir="$startdir/dbg/dbg_${pkg}"
 			[ ! -d "$dbgdir" ] && mkdir -p "$dbgdir"
@@ -2297,6 +2297,7 @@ if (( INFAKEROOT )); then
 			chmod a-s "$pkgdir"
 			backup_package_variables
 			run_package $pkg
+			tidy_install
 
 			if [ "$(check_option splitdbg)" = "y" ] || [ "$(check_option splithdr)" = "y" ] || [ "$SPLIT_DBG" = "1" ] || [ "$SPLIT_HDR" = "1" ]; then
 				create_package $pkg
@@ -2464,7 +2465,7 @@ else
 			fi
 		else
 			for pkg in ${pkgname[@]}; do
-				pkgdir="$pkgdir/$pkg"
+				pkgdir="$pkgdir/pkg_$pkg"
 				mkdir -p "$pkgdir"
 				chmod a-s "$pkgdir"
 				dbgdir="$startdir/dbg/dbg_${pkg}"
