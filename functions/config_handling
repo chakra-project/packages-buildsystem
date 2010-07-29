@@ -71,6 +71,9 @@ load_configs() {
 		elif [ "$_cur_repo" = "bundles-testing" ] ; then
                         . "_buildscripts/bundles-testing-${_arch}-pkgs.conf"
 
+		elif [ "$_cur_repo" = "xorg18" ] ; then
+                        . "_buildscripts/xorg18-${_arch}-pkgs.conf"
+
                 else
                         echo "ERROR: no repo specified!!!"
                         exit 1

@@ -2,8 +2,8 @@
 #
 # setup-git.sh based on setup.sh by Jan Mette and Phil Miller
 #
-# (c) 2010.06 - Manuel Tortosa <manutortosa[at]chakra-project[dot]org
-# (c) 2010.05 - Phil Miller <philm[at]chakra-project[dot]org
+# (c) 2010.06-2010.08 - Manuel Tortosa <manutortosa[at]chakra-project[dot]org
+# (c) 2010.05-2010.08 - Phil Miller <philm[at]chakra-project[dot]org
 # (c) 2010.01-2010.04 - Jan Mette
 # GPL 
 
@@ -13,7 +13,7 @@
 # globals
 #
 # version 
-VER="0.4.5.06"
+VER="0.4.5.07"
 
 # packages root dir (that contains the different repos)
 PKGSOURCE="http://chakra-project.org/repo/newbase"
@@ -118,12 +118,16 @@ if [ "$CMTR" = "c" ] ; then
 	# must be reomved when we've this repo in the same Git(orious) as packages
 	if [ "$REPO" = "bundles" ] ; then
 		GITBASE="git@gitorious.org:chakra-bundles"
+	elif [ "$REPO" = "xorg18" ] ; then
+		GITBASE="git@gitorious.org:chakra-xorg-stack"
 	else
 		GITBASE="git@gitorious.org:chakra-packages"
 	fi
 else
 	if [ "$REPO" = "bundles" ] ; then
 		GITBASE="git://gitorious.org/chakra-bundles"
+	elif [ "$REPO" = "xorg18" ] ; then
+		GITBASE="git://gitorious.org/chakra-xorg-stack"
 	else
 		GITBASE="git://gitorious.org/chakra-packages"
 	fi
@@ -135,7 +139,7 @@ fi
 BASEPATH=`echo $CURDIR/$BASENAME`
 
 # List of GIT repos
-REPO_CHECK='core\nplatform\ndesktop\napps\nbundles'
+REPO_CHECK='core\nplatform\ndesktop\napps\nbundles\nxorg18'
 
 GIT_BUILDSYS="$BUILDSYS_BASE/buildsystem.git"
 GIT_REPO="$GITBASE/${REPO}.git"
@@ -155,7 +159,7 @@ rm -rf $BASEPATH/pacman.conf
 #
 if [ -e "/etc/chakra-release" ] ; then
 	CHAK_VER=`cat /etc/chakra-release`
-	echo ":: running on Chakra/GNU linux $CHAK_VER"
+	echo ":: running on Chakra-Linux $CHAK_VER"
 	unset CHAK_VER
 	DISTRO="chakra"
 elif [ -e "/etc/arch-release" ] ; then
@@ -390,6 +394,17 @@ create_pacmanconf() {
 		echo " " >> $BASEPATH/pacman.conf
 		echo "[apps-testing]" >> $BASEPATH/pacman.conf
 		echo "Server=$PKGSOURCE/apps-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+
+	elif [ "$REPO_NAME" = "xorg18" ] ; then
+		echo "[xorg18]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/xorg18/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[core-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/core-testing/${ARCH}" >> $BASEPATH/pacman.conf
+		echo " " >> $BASEPATH/pacman.conf
+		echo "[platform-testing]" >> $BASEPATH/pacman.conf
+		echo "Server=$PKGSOURCE/platform-testing/${ARCH}" >> $BASEPATH/pacman.conf
 		echo " " >> $BASEPATH/pacman.conf
 	fi
 
@@ -664,6 +679,22 @@ create_chroot()
 		# update sudo timestamp to prevent further password questions
 		sudo -v
 		newline
+
+	elif [ "$REPO_NAME" = "xorg18" ] ; then
+
+		msg "installing basic packages"
+		warning "follow pacman instructions from here"
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
+
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -Sy 
+		sudo $PACMAN_BIN --config $BASEPATH/pacman.conf -r $BASEPATH/$REPO_NAME-${ARCH}/chroot --cachedir $BASEPATH/_cache -S base base-devel cmake subversion openssh git sudo xorg boost vi vim rsync pacman automoc4 file wget grep gettext repo-clean qt
+
+		# update sudo timestamp to prevent further password questions
+		sudo -v
+		newline
 	fi
 
 	status_start "configuring system"
@@ -931,7 +962,7 @@ if [ -z "${REPO}" ] ; then
 	newline
 	exit 1
 fi
-if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] && [ "${REPO}" != "bundles" ] ; then
+if [ "${REPO}" != "core" ] && [ "${REPO}" != "platform" ] && [ "${REPO}" != "desktop" ] && [ "${REPO}" != "apps" ] && [ "${REPO}" != "bundles" ] && [ "${REPO}" != "xorg18" ]; then
 	error "the repository ${REPO} does not exist!"
 	warning "available repos:\n$REPO_CHECK"
 	newline
