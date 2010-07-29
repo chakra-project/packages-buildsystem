@@ -32,4 +32,7 @@ user.conf
 
 *.db.tar.*
 *.pkg.tar.*
+*.tar.*
+*.log
+*.log*
 
